@@ -165,9 +165,9 @@ Til að byrja er hægt að afrita þetta repo og bæta við á sínu eigin:
 
 ## Mat
 
-* 30% – Töflur og gögn lesin inn
+* 20% – Töflur og gögn lesin inn
 * 30% – Auðkenning og notendaumsjón
-* 20% – Vörur og flokkar
+* 30% – Vörur og flokkar
 * 20% – Karfa og pantanir
 
 ## Sett fyrir
@@ -183,6 +183,8 @@ Skilaboð skulu innihalda:
 * Slóð á GitHub repo fyrir verkefni, og dæmatímakennurum skal hafa verið boðið í repo (sjá leiðbeiningar). Notendanöfn þeirra eru `freyrdanielsson`, `gunkol`, `kth130`
 * Slóð á verkefni keyrandi á Heroku
 * Nöfn allra í hópnum
+
+Fyrir skil gæti þurft að fjarlægja einhvern hópmeðlimi af repo, þ.a. hægt sé að bjóða dæmatímakennurum.
 
 ## Einkunn
 
