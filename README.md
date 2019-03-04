@@ -30,6 +30,7 @@ Notendur sem ekki eru innskráðir geta skoðað vörur og leitað í þeim.
   * Lýsing, lengri texti, krafist
   * Mynd, ekki krafist, url á mynd
   * Dagsetningu sem vöru var bætt við
+  * Flokkur, vísun í flokkstöflu
 * Notendur
   * Netfang, einstakt, krafist
   * Lykilorð, krafist, a.m.k. 8 stafir og ekki í [lista yfir algeng lykilorð](https://github.com/danielmiessler/SecLists/blob/master/Passwords/Common-Credentials/500-worst-passwords.txt) geymt sem hash úr `bcrypt`
