@@ -25,6 +25,6 @@ Myndir fengar frá:
 * [person holding gray corded hair dryer](https://unsplash.com/photos/yutgPvmHxYQ)
 * [white and black Polaroid One Step 2 instant camera on white board](https://unsplash.com/photos/KsLPTsYaqIQ)
 
-Allar myndir enda á `.jpg` og heita `imgN.jpg` þar sem N er `[1, 50]`.
+Allar myndir enda á `.jpg` og heita `imgN.jpg` þar sem N er `[1, 20]`.
 
 Allar myndir minnkaðar í `800px` breidd og þjappaðar með [ImageOptim](https://imageoptim.com/mac), með kveikt á [guetzli þjöppun](https://github.com/google/guetzli).
