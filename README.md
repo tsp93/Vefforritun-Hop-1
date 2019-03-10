@@ -32,6 +32,7 @@ Notendur sem ekki eru innskráðir geta skoðað vörur og leitað í þeim.
   * Dagsetningu sem vöru var bætt við
   * Flokkur, vísun í flokkstöflu
 * Notendur
+  * Notendanafn, einstakt, krafist
   * Netfang, einstakt, krafist
   * Lykilorð, krafist, a.m.k. 8 stafir og ekki í [lista yfir algeng lykilorð](https://github.com/danielmiessler/SecLists/blob/master/Passwords/Common-Credentials/500-worst-passwords.txt) geymt sem hash úr `bcrypt`
   * Stjórnandi, biti, sjálfgefið `false`
@@ -72,17 +73,17 @@ GET á `/` skal skila lista af slóðum í mögulegar aðgerðir.
 ### Notendur
 
 * `/users/`
-  * `GET` skilar síðu af notendum
+  * `GET` skilar síðu af notendum, aðeins ef notandi sem framkvæmir er stjórnandi
 * `/users/:id`
-  * `GET` skilar notanda
+  * `GET` skilar notanda, aðeins ef notandi sem framkvæmir er stjórnandi
   * `PATCH` breytir notanda, þ.m.t. hvort viðkomandi sé stjórnandi, aðeins ef notandi sem framkvæmir er stjórnandi
 * `/users/register`
-  * `POST` staðfestir og býr til notanda. Skilar auðkenni og netfangi
+  * `POST` staðfestir og býr til notanda. Skilar auðkenni og netfangi. Notandi sem búinn er til skal aldrei vera stjórnandi
 * `/users/login`
   * `POST` með netfangi og lykilorði skilar token ef gögn rétt
 * `/users/me`
-  * `GET` skilar upplýsingum um notanda sem á token, auðkenni og netfangi
-  * `PATCH` uppfærir netfang, lykilorð eða bæði ef gögn rétt
+  * `GET` skilar upplýsingum um notanda sem á token, auðkenni og netfangi, aðeins ef notandi innskráður
+  * `PATCH` uppfærir netfang, lykilorð eða bæði ef gögn rétt, aðeins ef notandi innskráður
 
 Aldrei skal skila eða sýna hash fyrir lykilorð.
 
@@ -90,34 +91,37 @@ Aldrei skal skila eða sýna hash fyrir lykilorð.
 
 * `/products`
   * `GET` Skilar síðu af vörum raðað í dagsetningar röð, nýjustu vörur fyrst
-  * `POST` býr til nýja vöru ef hún er gild og notandi hefur rétt til að búa til vöru
+  * `POST` býr til nýja vöru ef hún er gild og notandi hefur rétt til að búa til vöru, aðeins ef notandi sem framkvæmir er stjórnandi
 * `/products?category={category}`
   * `GET` Skilar síðu af vörum í flokk, raðað í dagsetningar röð, nýjustu vörur fyrst
 * `/products?search={query}`
   * `GET` Skilar síðu af vörum þar sem `{query}` er í titli eða lýsingu, raðað í dagsetningar röð, nýjustu vörur fyrst
+  * Það er hægt að senda bæði `search` og `category` í einu
 * `/products/:id`
   * `GET` sækir vöru
-  * `PATCH` uppfærir vöru
-  * `DELETE` uppfærir vöru
+  * `PATCH` uppfærir vöru, aðeins ef notandi sem framkvæmir er stjórnandi
+  * `DELETE` eyðir vöru, aðeins ef notandi sem framkvæmir er stjórnandi
 * `/categories`
   * `GET` skilar síðu af flokkum
-  * `POST` býr til flokk ef gildur og skilar
-  * `DELETE` eyðir flokk
+  * `POST` býr til flokk ef gildur og skilar, aðeins ef notandi sem framkvæmir er stjórnandi
+* `/categories/:id`
+  * `PATCH` uppfærir flokk, aðeins ef notandi sem framkvæmir er stjórnandi
+  * `DELETE` eyðir flokk, aðeins ef notandi sem framkvæmir er stjórnandi
 
 ### Karfa/pantanir
 
 * `/cart`
-  * `GET` skilar körfu fyrir notanda með öllum línum og reiknuðu heildarverði körfu
-  * `POST` bætir vöru við í körfu, krefst fjölda og auðkennis á vöru
+  * `GET` skilar körfu fyrir notanda með öllum línum og reiknuðu heildarverði körfu, aðeins ef notandi er innskráður
+  * `POST` bætir vöru við í körfu, krefst fjölda og auðkennis á vöru, aðeins ef notandi er innskráður
 * `/cart/line/:id`
-  * `GET` skilar línu í körfu með fjölda og upplýsingum um vöru
-  * `PATCH` uppfærir fjölda í línu
-  * `DELETE` eyðir línu úr körfu
+  * `GET` skilar línu í körfu með fjölda og upplýsingum um vöru, aðeins ef notandi er innskráður
+  * `PATCH` uppfærir fjölda í línu, aðeins ef notandi er innskráður, aðeins fyrir línu í körfu sem notandi á
+  * `DELETE` eyðir línu úr körfu, aðeins ef notandi er innskráður, aðeins fyrir línu í körfu sem notandi á
 * `/orders`
-  * `GET` skilar síðu af pöntunum, nýjustu pantanir fyrst
-  * `POST` býr til pöntun úr körfu með viðeigandi gildum
+  * `GET` skilar síðu af pöntunum, nýjustu pantanir fyrst, aðeins pantanir notanda ef ekki stjórnandi, annars allar pantanir
+  * `POST` býr til pöntun úr körfu með viðeigandi gildum, aðeins ef notandi er innskráður
 * `/orders/:id`
-  * `GET` skilar pöntun með öllum línum, gildum pöntunar og reiknuðu heildarverði körfu
+  * `GET` skilar pöntun með öllum línum, gildum pöntunar og reiknuðu heildarverði körfu, aðeins ef notandi á pöntun eða notandi er stjórnandi
 
 Fyrir hvert tilvik, bæði þegar gögn eru búin til eða uppfærð, skal staðfesta að notandi hafi rétt og að gögn séu rétt. Ef svo er ekki skal skila viðeigandi HTTP status kóða og villuskilaboðum sem segja til um villur.
 
@@ -127,7 +131,7 @@ Allar niðurstöður sem geta skilað mörgum færslum (fleiri en 10) skulu skil
 
 Ekki þarf að útfæra „týnt lykilorð“ virkni.
 
-Bækur geta aðeins verið í einum flokk.
+Vörur geta aðeins verið í einum flokk.
 
 Þegar gögn eru flutt inn í gagnagrunn getur verið gott að nýta `await` í lykkju þó að eslint mæli gegn því. Ef t.d. er reynt að setja inn yfir 500 færslur í einu í gagnagrunn með `Promise.all`, getur tenging rofnað vegna villu.
 
@@ -197,8 +201,9 @@ Verkefnahluti gildir 60% og lokapróf gildir 40%. Ná verður *bæði* verkefnah
 
 ---
 
-> Útgáfa 0.1
+> Útgáfa 0.2
 
-| Útgáfa | Lýsing                                    |
-|--------|-------------------------------------------|
-| 0.1    | Fyrsta útgáfa                             |
+| Útgáfa | Lýsing                                                                   |
+|--------|--------------------------------------------------------------------------|
+| 0.1    | Fyrsta útgáfa                                                            |
+| 0.2    | Bæta við nákvæmri útlistun á hvað notandi getur ekki en stjórnandi getur |
