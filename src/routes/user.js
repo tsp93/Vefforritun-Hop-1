@@ -24,7 +24,11 @@ async function getUserRoute(req, res) {
 
 async function changeAdminRoute(req, res) {
   const { id, changeTo } = req.query;
-  const result = await changeUserAdmin(id, changeTo);
+  const result = await changeUserAdmin(id, changeTo, req.user.id);
+
+  if (!result.success && result.selfDestruct) {
+    return res.status(403).json({ error: 'Cannot demote self' });
+  }
 
   if (!result.success && result.notFound) {
     return res.status(404).json({ error: 'User not found' });

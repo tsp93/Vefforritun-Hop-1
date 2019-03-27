@@ -48,7 +48,6 @@ app.use((req, res, next) => {
 async function strat(username, password, done) {
   try {
     const user = await getUserByUsername(username);
-    console.info(user);
 
     if (!user) {
       return done(null, false);

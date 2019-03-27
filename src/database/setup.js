@@ -11,7 +11,9 @@ const connectionString = process.env.DATABASE_URL;
 
 const readFileAsync = util.promisify(fs.readFile);
 
-// Setja upp flokka og vörur í gagnagrunn
+/**
+ * Setja upp flokka og vörur í gagnagrunn
+ */
 async function addStuff() {
   const categories = [];
   const categoryAmount = 14;
@@ -52,11 +54,10 @@ async function addStuff() {
     sqlCommands.push(`${sqlString.toString().slice(0, -1)} ON CONFLICT ON CONSTRAINT products_title_key DO NOTHING;`);
   }
 
-  // Setja í gagnagrunn
+  // Skeyta strengjum saman og beita á gagnagrunn
   const q = sqlCommands.join(' ');
   await query(q);
 }
-
 addStuff().catch((err) => {
   console.error(err);
 });
@@ -92,7 +93,6 @@ async function main() {
     console.error('Villa við að bæta gögnum við:', e.message);
   }
 }
-
 main().catch((err) => {
   console.error(err);
 });
