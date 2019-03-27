@@ -1,4 +1,4 @@
-CREATE TABLE departments (
+CREATE TABLE categories (
   id serial primary key,
   title varchar(100) unique not null
 );
@@ -9,7 +9,7 @@ CREATE TABLE products (
   description text not null,
   image varchar(200),
   created timestamp with time zone not null default current_timestamp,
-  departmentid int not null references departments(id)
+  categoryid int not null references categories(id)
 );
 
 CREATE TABLE users (

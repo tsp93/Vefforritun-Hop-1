@@ -19,6 +19,23 @@ async function query(q, values = []) {
   }
 }
 
+/* TODO
+getAllUsers, only for admin
+getUser(id), only for admin
+toggleUserAdmin, only for admin
+
+getProducts(category=null, query=null), newest first
+getProduct(id)
+updateProduct(id), only admin
+deleteProduct(id), only admin
+addProduct(product), if valid only for admin
+
+getCategories
+addCategory, only admin
+updateCategory, only admin
+deleteCategory, only admin
+*/
+
 // Stingur umsókn í gagnagrunninn
 async function insert(data) {
   const q = `
@@ -29,6 +46,13 @@ async function insert(data) {
   const values = [data.name, data.email, data.phone, data.text, data.job];
 
   return query(q, values);
+}
+
+// Sækir allar umsóknir
+async function selectUsers() {
+  const result = await query('SELECT * FROM users ORDER BY id');
+
+  return result.rows;
 }
 
 // Sækir allar umsóknir
@@ -55,13 +79,6 @@ async function deleteRow(id) {
   return query(q, [id]);
 }
 
-// Sækir alla notendur
-async function selectUsers() {
-  const result = await query('SELECT * FROM users ORDER BY id');
-
-  return result.rows;
-}
-
 // Uppfærir alla notendur
 async function updateUsers(ids, admin) {
   const results = [];
@@ -78,9 +95,9 @@ async function updateUsers(ids, admin) {
 module.exports = {
   query,
   insert,
+  selectUsers,
   select,
   update,
   deleteRow,
-  selectUsers,
   updateUsers,
 };
