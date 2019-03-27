@@ -32,7 +32,7 @@ app.use((req, res, next) => {
 });
 
 // Notum local strategy með sér stratti
-passport.use(new Strategy(strat));
+passport.use(new Strategy({ usernameField: 'email' }, strat));
 
 app.use(passport.initialize());
 
@@ -46,7 +46,7 @@ app.post(
     if (req.user.admin) {
       token = jwt.sign({ id: req.user.id }, jwtAdminSecret);
     }
-    res.status(200).json({ username: req.user.username, email: req.user.email, token });
+    res.status(200).json({ email: req.user.email, token });
   },
 );
 

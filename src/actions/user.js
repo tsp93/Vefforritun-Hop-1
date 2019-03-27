@@ -1,5 +1,8 @@
+require('dotenv').config();
+
 const bcrypt = require('bcrypt');
 const xss = require('xss');
+const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const util = require('util');
 const emailVal = require('email-validator');
@@ -7,6 +10,21 @@ const emailVal = require('email-validator');
 const readFileAsync = util.promisify(fs.readFile);
 
 const { query } = require('../database/db');
+
+/**
+ * @typedef {object} User
+ * @property {string} username Notendanafn
+ * @property {string} email Netfang notanda
+ * @property {boolean} admin Segir til hvort notandi sé stjórnandi
+ */
+
+/**
+ * @typedef {object} Result
+ * @property {boolean} success Hvort aðgerð hafi tekist
+ * @property {boolean} notFound Hvort hlutur hafi fundist
+ * @property {array} validation Fylki af villum, ef einhverjar
+ * @property {UserItem} item User item
+ */
 
 /**
  * Athugar hvort lykilorð sé slæmt.
@@ -20,38 +38,55 @@ async function isBadPassword(password) {
 }
 
 /**
+ * Athugar hvort strengur sé "tómur", þ.e.a.s. `null`, `undefined`.
+ *
+ * @param {string} s Strengur til að athuga
+ * @returns {boolean} `true` ef `s` er "tómt", annars `false`
+ */
+function isEmpty(s) {
+  return s == null && !s;
+}
+
+/**
  * Staðfestir að user item sé gilt.
  *
  * @param {User} user User item til að staðfesta
+ * @param {boolean} patching Satt ef uppfæring á sér stað, annars ósatt
  * @returns {array} Fylki af villum sem komu upp, tómt ef engin villa
  */
-async function validate({ username, email, password } = {}) {
+function validate({ username, email, password } = {}, patching) {
   const errors = [];
 
-  if (typeof username !== 'string' || username.length < 8 || username.length > 100) {
-    errors.push({
-      field: 'username',
-      message: 'Notendanafn verður að vera strengur sem er 8 til 100 stafir',
-    });
+  if (!isEmpty(username) || !patching) {
+    if (typeof username !== 'string' || username.length < 8 || username.length > 100) {
+      errors.push({
+        field: 'username',
+        message: 'Notendanafn verður að vera strengur sem er 8 til 100 stafir',
+      });
+    }
   }
 
-  if (typeof email !== 'string' || !emailVal.validate(email)) {
-    errors.push({
-      field: 'email',
-      message: 'Netfang verður að vera gilt netfang',
-    });
+  if (!isEmpty(email) || !patching) {
+    if (typeof email !== 'string' || !emailVal.validate(email)) {
+      errors.push({
+        field: 'email',
+        message: 'Netfang verður að vera gilt netfang',
+      });
+    }
   }
 
-  if (typeof password !== 'string' || password.length < 4 || password.length > 100) {
-    errors.push({
-      field: 'password',
-      message: 'Lykilorð verður að vera strengur sem er 4 til 100 stafir',
-    });
-  } else if (isBadPassword(password)) {
-    errors.push({
-      field: 'password',
-      message: 'Veldu betra lykilorð',
-    });
+  if (!isEmpty(password) || !patching) {
+    if (typeof password !== 'string' || password.length < 4 || password.length > 100) {
+      errors.push({
+        field: 'password',
+        message: 'Lykilorð verður að vera strengur sem er 4 til 100 stafir',
+      });
+    } else if (!isBadPassword(password)) {
+      errors.push({
+        field: 'password',
+        message: 'Veldu betra lykilorð',
+      });
+    }
   }
 
   return errors;
@@ -79,13 +114,13 @@ async function getUserById(id) {
 }
 
 /**
- * Sækir notanda eftir notendanafni.
+ * Sækir notanda eftir netfangi.
  *
- * @param {string} username Notendanafn
+ * @param {string} email netfang
  * @returns {array} Notandi ef fundinn, annars tómt
  */
-async function getUserByUsername(username) {
-  const result = await query(`SELECT id, username, password, email, admin FROM users WHERE username = '${username}'`);
+async function getUserByEmail(email) {
+  const result = await query(`SELECT id, username, password, email, admin FROM users WHERE email = '${email}'`);
   return result.rows[0];
 }
 
@@ -140,7 +175,7 @@ async function changeUserAdmin(id, changeTo, userId) {
  * @returns {array} Notandinn sem var búinn til
  */
 async function createUser(username, email, password) {
-  const validation = await validate({ username, email, password });
+  const validation = validate({ username, email, password }, false);
   if (validation.length > 0) {
     return {
       success: false,
@@ -163,9 +198,14 @@ async function createUser(username, email, password) {
   VALUES ($1, $2, $3)
   RETURNING id, email`;
   const values = [user.username, user.email, hashedPassword];
-  const result = await query(q, values);
+  let result;
+  try {
+    result = await query(q, values);
+  } catch (error) {
+    console.error(error);
+  }
 
-  if (result.rowCount === 0) {
+  if (!result || result.rowCount === 0) {
     return {
       success: false,
       notFound: true,
@@ -173,10 +213,69 @@ async function createUser(username, email, password) {
       item: null,
     };
   }
+  const token = jwt.sign({ id: result.rows[0].id }, process.env.JWT_SECRET);
   return {
     success: true,
     notFound: false,
     validation: [],
+    item: result.rows[0],
+    token,
+  };
+}
+
+/**
+ * Uppfærir netfang og/eða lykilorð.
+ *
+ * @param {number} userId Id fyrir notanda sem á að breyta
+ * @param {string} email Nýtt netfang
+ * @param {string} password Nýtt lykilorð
+ *
+ * @returns {array} Notandinn sem var breyttur
+ */
+async function updateUser(userId, email, password) {
+  const validation = validate({ email, password }, true);
+
+  if (validation.length > 0) {
+    return {
+      success: false,
+      validation,
+    };
+  }
+
+  const filteredValues = [
+    email ? xss(email) : null,
+    password ? bcrypt.hash(xss(password), 11) : null,
+  ]
+    .filter(Boolean);
+
+  const updates = [
+    email ? 'email' : null,
+    password ? 'password' : null,
+  ]
+    .filter(Boolean)
+    .map((field, i) => `${field} = $${i + 2}`);
+
+  const q = `
+    UPDATE users
+    SET ${updates} WHERE id = $1
+    RETURNING id, username, email`;
+  const values = [userId, ...filteredValues];
+
+  const result = await query(q, values);
+
+  if (result.rowCount === 0) {
+    return {
+      success: false,
+      validation: [],
+      notFound: true,
+      item: null,
+    };
+  }
+
+  return {
+    success: true,
+    validation: [],
+    notFound: false,
     item: result.rows[0],
   };
 }
@@ -200,18 +299,18 @@ async function comparePasswords(password, user) {
 }
 
 /**
- * Athugar hvort username og password sé til í notandakerfi.
+ * Athugar hvort email og password sé til í notandakerfi.
  * Callback tekur við villu sem fyrsta argument, annað argument er
  * - `false` ef notandi ekki til eða lykilorð vitlaust
  * - Notandahlutur ef rétt
  *
- * @param {string} username Notandanafn til að athuga
+ * @param {string} email Netfang til að athuga
  * @param {string} password Lykilorð til að athuga
  * @param {function} done Fall sem kallað er í með niðurstöðu
  */
-async function strat(username, password, done) {
+async function strat(email, password, done) {
   try {
-    const user = await getUserByUsername(username);
+    const user = await getUserByEmail(email);
 
     if (!user) {
       return done(null, false);
@@ -230,9 +329,10 @@ async function strat(username, password, done) {
 module.exports = {
   getAllUsers,
   getUserById,
-  getUserByUsername,
+  getUserByEmail,
   changeUserAdmin,
   createUser,
+  updateUser,
   comparePasswords,
   strat,
 };
