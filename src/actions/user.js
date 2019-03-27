@@ -183,7 +183,7 @@ async function createUser(username, email, password) {
 /**
  * Ber saman tvö lykilorð.
  *
- * @param {string} password Lykilorð þess sem vill skrá sig inn
+ * @param {string} password Lykilorð sem þarf að athuga
  * @param {User} user Notandi úr gagnagrunn
  *
  * @returns {boolean} Satt ef lykilorð er rétt, ósatt annars
@@ -198,6 +198,34 @@ async function comparePasswords(password, user) {
   return false;
 }
 
+/**
+ * Athugar hvort username og password sé til í notandakerfi.
+ * Callback tekur við villu sem fyrsta argument, annað argument er
+ * - `false` ef notandi ekki til eða lykilorð vitlaust
+ * - Notandahlutur ef rétt
+ *
+ * @param {string} username Notandanafn til að athuga
+ * @param {string} password Lykilorð til að athuga
+ * @param {function} done Fall sem kallað er í með niðurstöðu
+ */
+async function strat(username, password, done) {
+  try {
+    const user = await getUserByUsername(username);
+
+    if (!user) {
+      return done(null, false);
+    }
+
+    // Verður annað hvort notanda hlutur ef lykilorð rétt, eða false
+    const result = await comparePasswords(password, user);
+
+    return done(null, result);
+  } catch (err) {
+    console.error(err);
+    return done(err);
+  }
+}
+
 module.exports = {
   getAllUsers,
   getUserById,
@@ -205,4 +233,5 @@ module.exports = {
   changeUserAdmin,
   createUser,
   comparePasswords,
+  strat,
 };
