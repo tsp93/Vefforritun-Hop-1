@@ -93,14 +93,15 @@ async function getUserByUsername(username) {
  * Gerir notanda að stjórnanda eða gerir stjórnanda að venjulegum
  * notanda. Stjórnandi má ekki gera sjálfan sig að notanda.
  *
- * @param {number} id Id fyrir notanda
- * @param {boolean} changeTo Gildi sem notandi á að fá
- * @param {number} selfId Id fyrir stjórnandann sem er að breyta
+ * @param {number} id Id fyrir notanda sem á að breyta
+ * @param {boolean} changeTo Admin gildi sem notandi á að fá
+ * @param {number} userId Id fyrir notandann sem er að breyta
  *
  * @returns {array} Notandinn sem var breyttur
  */
-async function changeUserAdmin(id, changeTo, selfId) {
-  if (id === selfId) {
+async function changeUserAdmin(id, changeTo, userId) {
+  // Ekki leyfa notanda að breyta sjálfum sér
+  if (id === userId) {
     return {
       selfDestruct: true,
       success: false,

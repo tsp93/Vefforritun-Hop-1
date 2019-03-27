@@ -16,15 +16,16 @@ async function getAllUsersRoute(req, res) {
 }
 
 async function getUserRoute(req, res) {
-  const { id } = req.query;
-  const result = await getUserById(id);
+  const { userId } = req.query;
+  const result = await getUserById(userId);
 
   return res.json(result);
 }
 
 async function changeAdminRoute(req, res) {
   const { id, changeTo } = req.query;
-  const result = await changeUserAdmin(id, changeTo, req.user.id);
+  const { userId } = req.body;
+  const result = await changeUserAdmin(id, changeTo, userId);
 
   if (!result.success && result.selfDestruct) {
     return res.status(403).json({ error: 'Cannot demote self' });

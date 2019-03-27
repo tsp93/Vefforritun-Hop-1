@@ -11,7 +11,14 @@ function catchErrors(fn) {
   return (req, res, next) => fn(req, res, next).catch(next);
 }
 
-// Hjálpar middleware til að athuga hvort notandi sé stjórnandi
+/**
+ * Hjálpar middleware til að athuga hvort notandi sé stjórnandi
+ *
+ * @param {object} req Request hlutur
+ * @param {object} res Response hlutur
+ * @param {function} next Kall í næsta middleware
+ * @returns {function} Næsta middleware eða villu
+ */
 function isAdmin(req, res, next) {
   const { admin } = req.body;
   if (admin) {
@@ -44,8 +51,15 @@ function isValidToken(token) {
   }
 }
 
-// Hjálpar middleware sem athugar hvort notandi sé innskráður og hleypir okkur
-// þá áfram, annars gefur error
+/**
+ * Hjálpar middleware sem athugar hvort notandi sé innskráður
+ * og kallar í næsta middleware ef svo, annars gefur villu
+ *
+ * @param {object} req Request hlutur
+ * @param {object} res Response hlutur
+ * @param {function} next Kall í næsta middleware
+ * @returns {function} Næsta middleware eða villu
+ */
 function ensureLoggedIn(req, res, next) {
   const token = (req.body && req.body.token)
   || (req.query && req.query.token)
@@ -60,7 +74,14 @@ function ensureLoggedIn(req, res, next) {
   return res.status(401).json({ error: 'Token is invalid' });
 }
 
-// Koma í veg fyrir að innskráðir notendur skrá sig inn aftur
+/**
+ * Middleware til að koma í veg fyrir að innskráðir notendur skrái sig inn aftur
+ *
+ * @param {object} req Request hlutur
+ * @param {object} res Response hlutur
+ * @param {function} next Kall í næsta middleware
+ * @returns {function} Næsta middleware eða villu
+ */
 function preventSecondLogin(req, res, next) {
   const token = (req.body && req.body.token)
   || (req.query && req.query.token)
