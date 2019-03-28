@@ -4,7 +4,7 @@ const path = require('path');
 const express = require('express');
 
 const auth = require('./auth');
-const users = require('./routes/user');
+const api = require('./api');
 
 const app = express();
 
@@ -23,8 +23,7 @@ app.use((req, res, next) => {
 });
 
 app.use(auth);
-
-app.use(users);
+app.use('/', api);
 
 function notFoundHandler(req, res, next) { // eslint-disable-line
   console.warn('Not found', req.originalUrl);

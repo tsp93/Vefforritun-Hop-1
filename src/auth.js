@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 const app = express();
 app.use(express.json());
 
-const { getUserById, getUserByEmail, comparePasswords } = require('./api/user');
+const { getUserById, getUserByEmail, comparePasswords } = require('./functionality/user');
 const { catchErrors } = require('./utils');
 
 const jwtSecret = process.env.JWT_SECRET;
