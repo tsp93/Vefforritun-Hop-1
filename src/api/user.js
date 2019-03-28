@@ -166,6 +166,18 @@ async function changeUserAdmin(id, changeTo, userId) {
 }
 
 /**
+ * Hashar lykilorð með bcrypt
+ *
+ * @param {string} password Lykilorð til að hasha
+ *
+ * @returns {string} Hashað lykilorð
+ */
+async function hashPassword(password) {
+  const hashedPassword = await bcrypt.hash(password, 11);
+  return hashedPassword;
+}
+
+/**
  * Býr til notanda. Lykilorð er hashað.
  *
  * @param {string} username Notendanafn
@@ -191,7 +203,7 @@ async function createUser(username, email, password) {
     password: xss(password),
   };
 
-  const hashedPassword = await bcrypt.hash(user.password, 11);
+  const hashedPassword = await hashPassword(user.password);
 
   const q = `
   INSERT INTO users (username, email, password)
@@ -244,7 +256,7 @@ async function updateUser(userId, email, password) {
 
   const filteredValues = [
     email ? xss(email) : null,
-    password ? bcrypt.hash(xss(password), 11) : null,
+    password ? await hashPassword(xss(password)) : null,
   ]
     .filter(Boolean);
 
@@ -284,18 +296,13 @@ async function updateUser(userId, email, password) {
  * Ber saman tvö lykilorð.
  *
  * @param {string} password Lykilorð sem þarf að athuga
- * @param {User} user Notandi úr gagnagrunn
+ * @param {string} user Lykilorð notanda í gagnagrunni
  *
  * @returns {boolean} Satt ef lykilorð er rétt, ósatt annars
  */
-async function comparePasswords(password, user) {
-  const ok = await bcrypt.compare(password, user.password);
-
-  if (ok) {
-    return user;
-  }
-
-  return false;
+async function comparePasswords(password, userPass) {
+  const ok = await bcrypt.compare(password, userPass);
+  return ok;
 }
 
 /**

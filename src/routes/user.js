@@ -1,13 +1,14 @@
 const express = require('express');
 
-const { catchErrors, isAdmin, ensureLoggedIn } = require('../utils');
+const { catchErrors } = require('../utils');
+const { requireAuth, isAdmin } = require('../auth');
 const {
   getAllUsers,
   getUserById,
   changeUserAdmin,
   createUser,
   updateUser,
-} = require('../actions/user');
+} = require('../api/user');
 
 const router = express.Router();
 
@@ -56,7 +57,7 @@ async function getUserRoute(req, res) {
 async function changeAdminRoute(req, res) {
   const { id } = req.params;
   const { changeTo } = req.query;
-  const { userId } = req.body;
+  const userId = req.user.id;
 
   const result = await changeUserAdmin(id, changeTo, userId);
 
@@ -101,8 +102,8 @@ async function createUserRoute(req, res) {
  * @returns {array} Fylki með núverandi notanda
  */
 async function getMeRoute(req, res) {
-  const { userId } = req.body;
-  const result = await getUserById(userId);
+  const { id } = req.user;
+  const result = await getUserById(id);
 
   if (!result) {
     return res.status(404).json({ error: 'User not found' });
@@ -120,8 +121,8 @@ async function getMeRoute(req, res) {
  */
 async function changeMeRoute(req, res) {
   const { email, password } = req.query;
-  const { userId } = req.body;
-  const result = await updateUser(userId, email, password);
+  const { id } = req.user;
+  const result = await updateUser(id, email, password);
 
   if (!result.success && result.validation.length > 0) {
     return res.status(400).json(result.validation);
@@ -134,12 +135,11 @@ async function changeMeRoute(req, res) {
   return res.status(200).json(result.item);
 }
 
-router.get('/users/me', ensureLoggedIn, catchErrors(getMeRoute));
-router.patch('/users/me', ensureLoggedIn, catchErrors(changeMeRoute));
-router.get('/users/', ensureLoggedIn, isAdmin, catchErrors(getAllUsersRoute));
-router.get('/users/:id', ensureLoggedIn, isAdmin, catchErrors(getUserRoute));
-router.patch('/users/:id', ensureLoggedIn, isAdmin, catchErrors(changeAdminRoute));
+router.get('/users/me', requireAuth, catchErrors(getMeRoute));
+router.patch('/users/me', requireAuth, catchErrors(changeMeRoute));
+router.get('/users/', requireAuth, isAdmin, catchErrors(getAllUsersRoute));
+router.get('/users/:id', requireAuth, isAdmin, catchErrors(getUserRoute));
+router.patch('/users/:id', requireAuth, isAdmin, catchErrors(changeAdminRoute));
 router.post('/users/register', catchErrors(createUserRoute));
-
 
 module.exports = router;

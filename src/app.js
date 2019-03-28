@@ -3,17 +3,8 @@ require('dotenv').config();
 const path = require('path');
 const express = require('express');
 
-const jwt = require('jsonwebtoken');
-const passport = require('passport');
-const { Strategy } = require('passport-local');
-
-const { strat } = require('./actions/user');
-
+const auth = require('./auth');
 const users = require('./routes/user');
-const { preventSecondLogin } = require('./utils');
-
-const jwtSecret = process.env.JWT_SECRET;
-const jwtAdminSecret = process.env.JWT_ADMIN_SECRET;
 
 const app = express();
 
@@ -31,30 +22,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Notum local strategy með sér stratti
-passport.use(new Strategy({ usernameField: 'email' }, strat));
-
-app.use(passport.initialize());
-
-// Login virkni
-app.post(
-  '/users/login',
-  preventSecondLogin,
-  passport.authenticate('local', { session: false }),
-  (req, res) => {
-    let token = jwt.sign({ id: req.user.id }, jwtSecret);
-    if (req.user.admin) {
-      token = jwt.sign({ id: req.user.id }, jwtAdminSecret);
-    }
-    res.status(200).json({ email: req.user.email, token });
-  },
-);
-
-// Logout virkni
-app.get('/users/logout', (req, res) => {
-  req.logout();
-  return res.status(200).json({ message: 'logout successful', token: null });
-});
+app.use(auth);
 
 app.use(users);
 
