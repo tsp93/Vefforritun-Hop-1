@@ -14,8 +14,12 @@ const {
  * @returns {array} Fylki af vörum
  */
 async function getProductsRoute(req, res) {
-  const { offset = 0, limit = 10 } = req.query;
-  const result = await getProducts({ offset, limit });
+  const {
+    offset = 0, limit = 10, category = null, search = null,
+  } = req.query;
+  const result = await getProducts({
+    offset, limit, category, search,
+  });
 
   if (!result) {
     return res.status(404).json({ error: 'No products found' });
@@ -81,7 +85,7 @@ async function createProductRoute(req, res) {
 async function updateProductRoute(req, res) {
   const {
     title, description, imagepath, categoryId,
-  } = req.query;
+  } = req.body;
   const { id } = req.params;
   const result = await updateProduct(id, title, description, imagepath, categoryId);
 

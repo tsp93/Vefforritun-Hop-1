@@ -30,8 +30,6 @@ router.patch('/users/:id', requireAuth, isAdmin, catchErrors(changeAdminRoute));
 
 router.get('/products/', catchErrors(getProductsRoute));
 router.post('/products/', catchErrors(createProductRoute));
-router.get('/products?category={category}', catchErrors(getProductRoute));
-router.get('/products?search={query}', catchErrors(getProductRoute));
 router.get('/products/:id', catchErrors(getProductRoute));
 router.patch('/products/:id', catchErrors(updateProductRoute));
 router.delete('/products/:id', catchErrors(deleteProductRoute));

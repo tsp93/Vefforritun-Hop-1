@@ -51,7 +51,7 @@ async function getUserRoute(req, res) {
  */
 async function changeAdminRoute(req, res) {
   const { id } = req.params;
-  const { changeTo } = req.query;
+  const { changeTo } = req.body;
   const userId = req.user.id;
 
   const result = await changeUserAdmin(id, changeTo, userId);
@@ -115,7 +115,7 @@ async function getMeRoute(req, res) {
  * @returns {array} Fylki með núverandi notanda
  */
 async function changeMeRoute(req, res) {
-  const { email, password } = req.query;
+  const { email, password } = req.body;
   const { id } = req.user;
   const result = await updateUser(id, email, password);
 

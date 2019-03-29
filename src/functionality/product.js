@@ -28,17 +28,20 @@ cloudinary.config({
  * @returns {array} Fylki af vörum
  */
 async function getProducts({
-  category = null, text = null, offset = 0, limit = 10,
+  category = null, search = null, offset = 0, limit = 10,
 }) {
   let q = 'SELECT * FROM products';
 
-  if (category != null || text != null) {
+  if (category != null || search != null) {
     q = `${q} WHERE`;
     if (category != null) {
       q = `${q} categoryid = ${category}`;
     }
-    if (text != null) {
-      q = `${q} title LIKE '%${text}%' OR description LIKE '%${text}%'`;
+    if (category != null && search != null) {
+      q = `${q} AND`;
+    }
+    if (search != null) {
+      q = `${q} LOWER(title) LIKE LOWER('%${search}%') OR LOWER(description) LIKE LOWER('%${search}%')`;
     }
   }
   q = `${q} ORDER BY created`;
