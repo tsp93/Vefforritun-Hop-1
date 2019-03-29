@@ -7,16 +7,16 @@ CREATE TABLE products (
   id serial primary key,
   title varchar(100) unique not null,
   description text not null,
-  image varchar(200),
+  image varchar(255),
   created timestamp with time zone not null default current_timestamp,
   categoryid int not null references categories(id)
 );
 
 CREATE TABLE users (
   id serial primary key,
-  username varchar(64) unique not null,
+  username varchar(32) unique not null,
   email varchar(64) unique not null,
-  password text not null,
+  password varchar(255) not null,
   admin boolean default false
 );
 

@@ -1,5 +1,5 @@
 const {
-  getAllUsers,
+  getUsers,
   getUserById,
   changeUserAdmin,
   createUser,
@@ -13,8 +13,9 @@ const {
  * @param {object} res Response hlutur
  * @returns {array} Fylki af notendum
  */
-async function getAllUsersRoute(req, res) {
-  const result = await getAllUsers();
+async function getUsersRoute(req, res) {
+  const { offset = 0, limit = 10 } = req.query;
+  const result = await getUsers({ offset, limit });
 
   if (!result) {
     return res.status(404).json({ error: 'No users found' });
@@ -130,7 +131,7 @@ async function changeMeRoute(req, res) {
 }
 
 module.exports = {
-  getAllUsersRoute,
+  getUsersRoute,
   getUserRoute,
   changeAdminRoute,
   createUserRoute,

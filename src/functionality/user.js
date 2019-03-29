@@ -4,31 +4,18 @@ const bcrypt = require('bcrypt');
 const xss = require('xss');
 const jwt = require('jsonwebtoken');
 
-const { query } = require('../database/db');
+const { query, paged, conditionalUpdate } = require('../database/db');
 const { validateUser } = require('./validate');
 
 /**
- * @typedef {object} User
- * @property {string} username Notendanafn
- * @property {string} email Netfang notanda
- * @property {boolean} admin Segir til hvort notandi sé stjórnandi
- */
-
-/**
- * @typedef {object} Result
- * @property {boolean} success Hvort aðgerð hafi tekist
- * @property {boolean} notFound Hvort hlutur hafi fundist
- * @property {array} validation Fylki af villum, ef einhverjar
- * @property {UserItem} item User item
- */
-
-/**
- * Sækir alla notendur.
+ * Sækir notendur.
  *
- * @returns {array} Fylki af öllum notendum
+ * @param offset Hvaða notanda á að byrja á
+ * @param limit Hversu marga notendur á að ná í
+ * @returns {array} Fylki af notendum
  */
-async function getAllUsers() {
-  const result = await query('SELECT id, username, email, admin FROM users ORDER BY id');
+async function getUsers({ offset = 0, limit = 10 }) {
+  const result = await paged('SELECT id, username, email, admin FROM users ORDER BY id', { offset, limit });
   return result.rows;
 }
 
@@ -184,26 +171,21 @@ async function updateUser(userId, email, password) {
     };
   }
 
-  const filteredValues = [
+  const values = [
     email ? xss(email) : null,
     password ? await hashPassword(xss(password)) : null,
   ]
     .filter(Boolean);
 
-  const updates = [
+  const fields = [
     email ? 'email' : null,
     password ? 'password' : null,
   ]
-    .filter(Boolean)
-    .map((field, i) => `${field} = $${i + 2}`);
+    .filter(Boolean);
 
-  const q = `
-    UPDATE users
-    SET ${updates} WHERE id = $1
-    RETURNING id, username, email`;
-  const values = [userId, ...filteredValues];
-
-  const result = await query(q, values);
+  const result = await conditionalUpdate({
+    table: 'users', id: userId, values, fields,
+  });
 
   if (result.rowCount === 0) {
     return {
@@ -214,11 +196,14 @@ async function updateUser(userId, email, password) {
     };
   }
 
+  const item = result.rows[0];
+  delete item.password;
+
   return {
     success: true,
     validation: [],
     notFound: false,
-    item: result.rows[0],
+    item,
   };
 }
 
@@ -236,7 +221,7 @@ async function comparePasswords(password, userPass) {
 }
 
 module.exports = {
-  getAllUsers,
+  getUsers,
   getUserById,
   getUserByEmail,
   changeUserAdmin,

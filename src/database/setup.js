@@ -2,12 +2,24 @@ require('dotenv').config();
 
 const fs = require('fs');
 const util = require('util');
+const cloudinary = require('cloudinary').v2;
 const faker = require('faker');
 const SqlInsert = require('sql-insert-generator');
 
 const { query } = require('./db');
 
 const connectionString = process.env.DATABASE_URL;
+const {
+  CLOUDINARY_CLOUD,
+  CLOUDINARY_API_KEY,
+  CLOUDINARY_API_SECRET,
+} = process.env;
+
+cloudinary.config({
+  cloud_name: CLOUDINARY_CLOUD,
+  api_key: CLOUDINARY_API_KEY,
+  api_secret: CLOUDINARY_API_SECRET,
+});
 
 const readFileAsync = util.promisify(fs.readFile);
 
@@ -49,7 +61,7 @@ async function addStuff() {
     sqlString.table('products')
       .insert({ title: fakeProduct })
       .insert({ description: descript })
-      .insert({ image: randImg })
+      .insert({ image: cloudinary.url(`v1553806495/Vef2-Hop1/${randImg}`) })
       .insert({ categoryId: randCatId });
     sqlCommands.push(`${sqlString.toString().slice(0, -1)} ON CONFLICT ON CONSTRAINT products_title_key DO NOTHING;`);
   }
