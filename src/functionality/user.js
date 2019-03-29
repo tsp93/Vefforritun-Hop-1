@@ -132,14 +132,15 @@ async function createUser(username, email, password) {
   if (!result || result.rowCount === 0) {
     return {
       success: false,
-      notFound: true,
+      alreadyExists: true,
       validation: [],
     };
   }
+
   const token = jwt.sign({ id: result.rows[0].id }, process.env.JWT_SECRET);
   return {
     success: true,
-    notFound: false,
+    alreadyExists: false,
     validation: [],
     item: result.rows[0],
     token,
@@ -177,9 +178,7 @@ async function updateUser(userId, email, password) {
   ]
     .filter(Boolean);
 
-  const result = await conditionalUpdate({
-    table: 'users', id: userId, values, fields,
-  });
+  const result = await conditionalUpdate('users', userId, fields, values);
 
   if (result.rowCount === 0) {
     return {

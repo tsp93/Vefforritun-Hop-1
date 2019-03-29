@@ -42,7 +42,7 @@ function validateUser({ username, email, password } = {}, patching) {
   const errors = [];
 
   if (!isEmpty(username) || !patching) {
-    if (typeof username !== 'string' || username.length < 8 || username.length > 100) {
+    if (typeof username !== 'string' || username.length < 8 || username.length > 32) {
       errors.push({
         field: 'username',
         message: 'Notendanafn verður að vera strengur sem er 8 til 32 stafir',
@@ -60,7 +60,7 @@ function validateUser({ username, email, password } = {}, patching) {
   }
 
   if (!isEmpty(password) || !patching) {
-    if (typeof password !== 'string' || password.length < 4 || password.length > 100) {
+    if (typeof password !== 'string' || password.length < 4 || password.length > 40) {
       errors.push({
         field: 'password',
         message: 'Lykilorð verður að vera strengur sem er 4 til 40 stafir',
@@ -89,19 +89,19 @@ function validateProduct({
   const errors = [];
 
   if (!isEmpty(title) || !patching) {
-    if (typeof title !== 'string') {
+    if (typeof title !== 'string' || title.length < 4 || title.length > 40) {
       errors.push({
         field: 'title',
-        message: 'Titill verður að vera strengur',
+        message: 'Titill verður að vera strengur sem er 4 til 40 stafir',
       });
     }
   }
 
   if (!isEmpty(description) || !patching) {
-    if (typeof description !== 'string') {
+    if (typeof description !== 'string' || description.length < 4 || description.length > 255) {
       errors.push({
         field: 'description',
-        message: 'Lýsing verður að vera strengur',
+        message: 'Lýsing verður að vera strengur sem er 4 til 255 stafir',
       });
     }
   }
@@ -116,12 +116,32 @@ function validateProduct({
   }
 
   if (!isEmpty(categoryId) || !patching) {
-    if (typeof categoryId !== 'string' || Number(categoryId) < 0) {
+    if (typeof categoryId !== 'string' || Number(categoryId) < 0 || Number.isInteger(Number(categoryId))) {
       errors.push({
         field: 'categoryId',
-        message: 'Verður að vera tala stærri en núll',
+        message: 'Verður að vera heiltala stærri en núll',
       });
     }
+  }
+
+  return errors;
+}
+
+/**
+ * Staðfestir að flokkur sé gildur.
+ *
+ * @param {string} title Titill flokks
+ * @param {boolean} patching Satt ef uppfæring á sér stað, annars ósatt
+ * @returns {array} Fylki af villum sem komu upp, tómt ef engin villa
+ */
+function validateCategory(title) {
+  const errors = [];
+
+  if (typeof title !== 'string' || title.length < 4 || title.length > 40) {
+    errors.push({
+      field: 'title',
+      message: 'Titill verður að vera strengur sem er 4 til 40 stafir',
+    });
   }
 
   return errors;
@@ -130,4 +150,5 @@ function validateProduct({
 module.exports = {
   validateUser,
   validateProduct,
+  validateCategory,
 };

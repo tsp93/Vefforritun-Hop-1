@@ -87,6 +87,11 @@ async function updateProductRoute(req, res) {
     title, description, imagepath, categoryId,
   } = req.body;
   const { id } = req.params;
+
+  if (!Number.isInteger(Number(id))) {
+    return res.status(404).json({ error: 'Product not found' });
+  }
+
   const result = await updateProduct(id, title, description, imagepath, categoryId);
 
   if (!result.success && result.validation.length > 0) {
@@ -109,6 +114,11 @@ async function updateProductRoute(req, res) {
  */
 async function deleteProductRoute(req, res) {
   const { id } = req.params;
+
+  if (!Number.isInteger(Number(id))) {
+    return res.status(404).json({ error: 'Product not found' });
+  }
+
   const result = await deleteProduct(id);
 
   if (!result) {

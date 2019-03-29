@@ -8,8 +8,8 @@ CREATE TABLE products (
   title varchar(100) unique not null,
   description text not null,
   image varchar(255),
-  created timestamp with time zone not null default current_timestamp,
-  categoryid int not null references categories(id)
+  categoryid int not null references categories(id) on delete cascade,
+  created timestamp with time zone not null default current_timestamp
 );
 
 CREATE TABLE users (
@@ -22,7 +22,7 @@ CREATE TABLE users (
 
 CREATE TABLE ordercart (
   id serial primary key,
-  userid int not null references users(id),
+  userid int not null references users(id) on delete cascade,
   isorder boolean,
   name varchar(100),
   address varchar(100),
@@ -31,7 +31,7 @@ CREATE TABLE ordercart (
 
 CREATE TABLE ordercartproducts (
   id serial primary key,
-  ordercart int not null references ordercart(id),
-  product int not null references products(id),
+  ordercart int not null references ordercart(id) on delete cascade,
+  product int not null references products(id) on delete cascade,
   amount int constraint positive_amount check (amount>0)
 );

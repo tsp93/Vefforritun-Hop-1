@@ -41,7 +41,7 @@ async function getProducts({
       q = `${q} AND`;
     }
     if (search != null) {
-      q = `${q} LOWER(title) LIKE LOWER('%${search}%') OR LOWER(description) LIKE LOWER('%${search}%')`;
+      q = `${q} title LIKE '%${search}%' OR description LIKE '%${search}%'`;
     }
   }
   q = `${q} ORDER BY created`;
@@ -223,10 +223,7 @@ async function updateProduct(id, title, description, imagepath, categoryID) {
   ]
     .filter(Boolean);
 
-  const result = await conditionalUpdate({
-    table: 'products', id, values, fields,
-  });
-  console.info(result);
+  const result = await conditionalUpdate('products', id, fields, values);
 
   if (result.rowCount === 0) {
     return {

@@ -7,7 +7,7 @@ const {
 } = require('../functionality/user');
 
 /**
- * Route handler til að ná í alla notendur
+ * Route handler til að ná í notendur
  *
  * @param {object} req Request hlutur
  * @param {object} res Response hlutur
@@ -54,6 +54,10 @@ async function changeAdminRoute(req, res) {
   const { changeTo } = req.body;
   const userId = req.user.id;
 
+  if (!Number.isInteger(Number(id))) {
+    return res.status(404).json({ error: 'User not found' });
+  }
+
   const result = await changeUserAdmin(id, changeTo, userId);
 
   if (!result.success && result.selfDestruct) {
@@ -82,7 +86,7 @@ async function createUserRoute(req, res) {
     return res.status(400).json(result.validation);
   }
 
-  if (!result.success && result.notFound) {
+  if (!result.success && result.alreadyExists) {
     return res.status(409).json({ error: 'User already exists' });
   }
 

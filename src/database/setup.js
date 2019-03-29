@@ -77,7 +77,7 @@ addStuff().catch((err) => {
 async function main() {
   console.info(`Set upp gagnagrunn á ${connectionString}`);
   // Droppa töflum ef til
-  await query('DROP TABLE IF EXISTS ordercartproducts');
+  await query('DROP TABLE IF EXISTS ordercartproducts;');
   await query('DROP TABLE IF EXISTS ordercart');
   await query('DROP TABLE IF EXISTS users');
   await query('DROP TABLE IF EXISTS products');
