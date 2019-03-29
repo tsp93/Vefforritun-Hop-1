@@ -116,10 +116,10 @@ function validateProduct({
   }
 
   if (!isEmpty(categoryId) || !patching) {
-    if (typeof categoryId !== 'number' || categoryId < 0) {
+    if (typeof categoryId !== 'string' || Number(categoryId) < 0) {
       errors.push({
-        field: 'category',
-        message: 'Flokkur verður að vera til',
+        field: 'categoryId',
+        message: 'Verður að vera tala stærri en núll',
       });
     }
   }

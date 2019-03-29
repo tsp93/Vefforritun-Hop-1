@@ -57,8 +57,6 @@ async function changeUserAdmin(id, changeTo, userId) {
     return {
       selfDestruct: true,
       success: false,
-      notFound: false,
-      item: null,
     };
   }
 
@@ -71,7 +69,6 @@ async function changeUserAdmin(id, changeTo, userId) {
       selfDestruct: false,
       success: false,
       notFound: true,
-      item: null,
     };
   }
   return {
@@ -108,9 +105,7 @@ async function createUser(username, email, password) {
   if (validation.length > 0) {
     return {
       success: false,
-      notFound: false,
       validation,
-      item: null,
     };
   }
 
@@ -139,7 +134,6 @@ async function createUser(username, email, password) {
       success: false,
       notFound: true,
       validation: [],
-      item: null,
     };
   }
   const token = jwt.sign({ id: result.rows[0].id }, process.env.JWT_SECRET);
@@ -190,9 +184,8 @@ async function updateUser(userId, email, password) {
   if (result.rowCount === 0) {
     return {
       success: false,
-      validation: [],
       notFound: true,
-      item: null,
+      validation: [],
     };
   }
 
@@ -201,8 +194,8 @@ async function updateUser(userId, email, password) {
 
   return {
     success: true,
-    validation: [],
     notFound: false,
+    validation: [],
     item,
   };
 }

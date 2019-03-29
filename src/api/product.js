@@ -1,6 +1,6 @@
 const {
   getProducts,
-  getProduct,
+  getProductById,
   createProduct,
   updateProduct,
   deleteProduct,
@@ -33,7 +33,7 @@ async function getProductsRoute(req, res) {
  */
 async function getProductRoute(req, res) {
   const { id } = req.params;
-  const result = await getProduct(id);
+  const result = await getProductById(id);
 
   if (!result) {
     return res.status(404).json({ error: 'Product not found' });
@@ -51,28 +51,73 @@ async function getProductRoute(req, res) {
  */
 async function createProductRoute(req, res) {
   const {
-    title, description, imagepath, category,
+    title, description, imagepath, categoryId,
   } = req.body;
 
   if (!imagepath) {
     return res.status(400).json({ error: 'Unable to read image' });
   }
 
-  const result = await createProduct(title, description, imagepath, category);
+  const result = await createProduct(title, description, imagepath, categoryId);
 
   if (!result.success && result.validation.length > 0) {
     return res.status(400).json(result.validation);
   }
 
-  if (!result.success && result.notFound) {
+  if (!result.success && result.alreadyExists) {
     return res.status(409).json({ error: 'Product already exists' });
   }
 
   return res.status(201).json(result.item);
 }
 
+/**
+ * Route handler til að breyta vöru
+ *
+ * @param {object} req Request hlutur
+ * @param {object} res Response hlutur
+ * @returns {array} Fylki með breyttri vöru
+ */
+async function updateProductRoute(req, res) {
+  const {
+    title, description, imagepath, categoryId,
+  } = req.query;
+  const { id } = req.params;
+  const result = await updateProduct(id, title, description, imagepath, categoryId);
+
+  if (!result.success && result.validation.length > 0) {
+    return res.status(400).json(result.validation);
+  }
+
+  if (!result.success && result.notFound) {
+    return res.status(404).json({ error: 'Product not found' });
+  }
+
+  return res.status(200).json(result.item);
+}
+
+/**
+ * Route handler til að eyða vöru
+ *
+ * @param {object} req Request hlutur
+ * @param {object} res Response hlutur
+ * @returns {array} Fylki af eyddri vöru
+ */
+async function deleteProductRoute(req, res) {
+  const { id } = req.params;
+  const result = await deleteProduct(id);
+
+  if (!result) {
+    return res.status(404).json({ error: 'Product not found' });
+  }
+
+  return res.status(200).json(result);
+}
+
 module.exports = {
   getProductsRoute,
   getProductRoute,
   createProductRoute,
+  updateProductRoute,
+  deleteProductRoute,
 };

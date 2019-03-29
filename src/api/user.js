@@ -124,7 +124,7 @@ async function changeMeRoute(req, res) {
   }
 
   if (!result.success && result.notFound) {
-    return res.status(404).json({ error: 'Item not found' });
+    return res.status(404).json({ error: 'User not found' });
   }
 
   return res.status(200).json(result.item);
