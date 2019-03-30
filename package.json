@@ -8,7 +8,8 @@
     "dev": "nodemon src/app.js",
     "setup": "node src/database/setup.js",
     "eslint": "eslint *.js",
-    "test": "npm run eslint"
+    "test": "npm run eslint",
+    "start": "node src/app.js"
   },
   "keywords": [],
   "author": "",
