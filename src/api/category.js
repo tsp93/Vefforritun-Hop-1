@@ -17,7 +17,7 @@ async function getCategoriesRoute(req, res) {
   const result = await getCategories({ offset, limit });
 
   if (!result) {
-    return res.status(404).json({ error: 'No categories' });
+    return res.status(404).json({ error: 'No categories found' });
   }
 
   return res.status(200).json(result);
@@ -90,7 +90,7 @@ async function deleteCategoryRoute(req, res) {
   const result = await deleteCategory(id);
 
   if (!result) {
-    return res.status(404).json({ error: 'No categories' });
+    return res.status(404).json({ error: 'Category not found' });
   }
 
   return res.status(200).json(result);

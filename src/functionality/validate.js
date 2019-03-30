@@ -84,7 +84,7 @@ function validateUser({ username, email, password } = {}, patching) {
  * @returns {array} Fylki af villum sem komu upp, tómt ef engin villa
  */
 function validateProduct({
-  title, description, imagepath, categoryId,
+  title, description, price, imagepath, categoryId,
 } = {}, patching) {
   const errors = [];
 
@@ -106,6 +106,15 @@ function validateProduct({
     }
   }
 
+  if (!isEmpty(price) || !patching) {
+    if (!Number.isInteger(Number(price)) || Number(price) < 1) {
+      errors.push({
+        field: 'price',
+        message: 'Verð verður að vera heiltala stærri en núll',
+      });
+    }
+  }
+
   if (!isEmpty(imagepath) || !patching) {
     if (typeof imagepath !== 'string' || ['jpg', 'png', 'gif'].includes(mime.getExtension(imagepath))) {
       errors.push({
@@ -116,7 +125,7 @@ function validateProduct({
   }
 
   if (!isEmpty(categoryId) || !patching) {
-    if (typeof categoryId !== 'string' || Number(categoryId) < 0 || Number.isInteger(Number(categoryId))) {
+    if (!Number.isInteger(Number(categoryId)) || Number(categoryId) < 1) {
       errors.push({
         field: 'categoryId',
         message: 'Verður að vera heiltala stærri en núll',
@@ -147,8 +156,38 @@ function validateCategory(title) {
   return errors;
 }
 
+/**
+ * Staðfestir að lína sé gild.
+ *
+ * @param {Line} line Line item til að staðfesta
+ * @param {boolean} patching Satt ef uppfæring á sér stað, annars ósatt
+ * @returns {array} Fylki af villum sem komu upp, tómt ef engin villa
+ */
+function validateLine(productId, amount, patching) {
+  const errors = [];
+
+  if (!patching) {
+    if (!Number.isInteger(Number(productId)) || Number(productId) < 1) {
+      errors.push({
+        field: 'productId',
+        message: 'Verður að vera heiltala stærri en núll',
+      });
+    }
+  }
+
+  if (!Number.isInteger(Number(amount)) || Number(amount) < 1) {
+    errors.push({
+      field: 'amount',
+      message: 'Fjöldi verður að vera heiltala stærri en núll',
+    });
+  }
+
+  return errors;
+}
+
 module.exports = {
   validateUser,
   validateProduct,
   validateCategory,
+  validateLine,
 };

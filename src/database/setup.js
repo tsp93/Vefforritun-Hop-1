@@ -28,6 +28,8 @@ const readFileAsync = util.promisify(fs.readFile);
  */
 async function addStuff() {
   const categories = [];
+  const minPrice = 50;
+  const maxPrice = 1000;
   const categoryAmount = 14;
   const productAmount = 1600;
   const imgAmount = 20;
@@ -53,6 +55,7 @@ async function addStuff() {
   for (let i = 0; i < productAmount; i += 1) {
     const fakeProduct = faker.fake('{{commerce.productAdjective}} {{commerce.productName}}');
     const descript = faker.lorem.paragraph();
+    const randPrice = Math.floor(Math.random() * maxPrice + minPrice);
     const randCatId = Math.floor(Math.random() * categoryAmount + 1);
     const randImgId = Math.floor(Math.random() * imgAmount + 1);
     const randImg = `img${randImgId}.jpg`;
@@ -61,6 +64,7 @@ async function addStuff() {
     sqlString.table('products')
       .insert({ title: fakeProduct })
       .insert({ description: descript })
+      .insert({ price: randPrice })
       .insert({ image: cloudinary.url(`v1553806495/Vef2-Hop1/${randImg}`) })
       .insert({ categoryId: randCatId });
     sqlCommands.push(`${sqlString.toString().slice(0, -1)} ON CONFLICT ON CONSTRAINT products_title_key DO NOTHING;`);

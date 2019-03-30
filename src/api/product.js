@@ -55,14 +55,14 @@ async function getProductRoute(req, res) {
  */
 async function createProductRoute(req, res) {
   const {
-    title, description, imagepath, categoryId,
+    title, description, price, imagepath, categoryId,
   } = req.body;
 
   if (!imagepath) {
     return res.status(400).json({ error: 'Unable to read image' });
   }
 
-  const result = await createProduct(title, description, imagepath, categoryId);
+  const result = await createProduct(title, description, price, imagepath, categoryId);
 
   if (!result.success && result.validation.length > 0) {
     return res.status(400).json(result.validation);

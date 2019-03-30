@@ -23,6 +23,13 @@ const {
   updateCategoryRoute,
   deleteCategoryRoute,
 } = require('./category');
+const {
+  getCartRoute,
+  addToCartRoute,
+  getCartLineRoute,
+  updateCartLineRoute,
+  deleteCartLineRoute,
+} = require('./cart');
 
 const router = express.Router();
 
@@ -35,14 +42,20 @@ router.get('/users/:id', requireAuth, isAdmin, catchErrors(getUserRoute));
 router.patch('/users/:id', requireAuth, isAdmin, catchErrors(changeAdminRoute));
 
 router.get('/categories/', catchErrors(getCategoriesRoute));
-router.post('/categories/', catchErrors(createCategoryRoute));
-router.patch('/categories/:id', catchErrors(updateCategoryRoute));
-router.delete('/categories/:id', catchErrors(deleteCategoryRoute));
+router.post('/categories/', requireAuth, isAdmin, catchErrors(createCategoryRoute));
+router.patch('/categories/:id', requireAuth, isAdmin, catchErrors(updateCategoryRoute));
+router.delete('/categories/:id', requireAuth, isAdmin, catchErrors(deleteCategoryRoute));
 
 router.get('/products/', catchErrors(getProductsRoute));
-router.post('/products/', catchErrors(createProductRoute));
+router.post('/products/', requireAuth, isAdmin, catchErrors(createProductRoute));
 router.get('/products/:id', catchErrors(getProductRoute));
-router.patch('/products/:id', catchErrors(updateProductRoute));
-router.delete('/products/:id', catchErrors(deleteProductRoute));
+router.patch('/products/:id', requireAuth, isAdmin, catchErrors(updateProductRoute));
+router.delete('/products/:id', requireAuth, isAdmin, catchErrors(deleteProductRoute));
+
+router.get('/cart/', requireAuth, catchErrors(getCartRoute));
+router.post('/cart/', requireAuth, catchErrors(addToCartRoute));
+router.get('/cart/line/:id', requireAuth, catchErrors(getCartLineRoute));
+router.patch('/cart/line/:id', requireAuth, catchErrors(updateCartLineRoute));
+router.delete('/cart/line/:id', requireAuth, catchErrors(deleteCartLineRoute));
 
 module.exports = router;

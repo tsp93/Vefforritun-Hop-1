@@ -6,6 +6,7 @@ CREATE TABLE categories (
 CREATE TABLE products (
   id serial primary key,
   title varchar(100) unique not null,
+  price int not null,
   description text not null,
   image varchar(255),
   categoryid int not null references categories(id) on delete cascade,

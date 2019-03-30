@@ -107,13 +107,14 @@ async function uploadToCloudinary(imagepath) {
  *
  * @param {string} title Titill á vöru
  * @param {string} description Lýsing á vöru
+ * @param {number} price Verð á vöru
  * @param {string} image Path á mynd með endingu: jpg, png eða gif
- * @param {string} categoryID Id á flokk
+ * @param {number} categoryID Id á flokk
  * @returns {array} Fylki með vöru
  */
-async function createProduct(title, description, imagepath, categoryID) {
+async function createProduct(title, description, price, imagepath, categoryID) {
   const validation = validateProduct({
-    title, description, imagepath, categoryID,
+    title, description, price, imagepath, categoryID,
   }, false);
   if (validation.length > 0) {
     return {
@@ -122,6 +123,7 @@ async function createProduct(title, description, imagepath, categoryID) {
     };
   }
 
+  const prodPrice = Number(price);
   const categoryId = Number(categoryID);
 
   const prod = await getProductByTitle(title);
@@ -142,15 +144,22 @@ async function createProduct(title, description, imagepath, categoryID) {
   const product = {
     title: xss(title),
     description: xss(description),
+    prodPrice,
     image: item.secure_url,
     categoryId,
   };
 
   const q = `
-  INSERT INTO products (title, description, image, categoryid)
-  VALUES ($1, $2, $3, $4)
+  INSERT INTO products (title, description, price, image, categoryid)
+  VALUES ($1, $2, $3, $4, $5)
   RETURNING *`;
-  const values = [product.title, product.description, product.image, product.categoryId];
+  const values = [
+    product.title,
+    product.description,
+    product.prodPrice,
+    product.image,
+    product.categoryId,
+  ];
   let result = null;
   try {
     result = await query(q, values);
@@ -180,14 +189,15 @@ async function createProduct(title, description, imagepath, categoryID) {
  * @param {number} id Id á vöru sem á að breyta
  * @param {string} title Titill á vöru
  * @param {string} description Lýsing á vöru
+ * @param {number} price Verð á vöru
  * @param {string} image Path á mynd með endingu: jpg, png eða gif
- * @param {string} categoryID Id á flokk
+ * @param {number} categoryID Id á flokk
  *
  * @returns {array} Varan sem var breytt
  */
-async function updateProduct(id, title, description, imagepath, categoryID) {
+async function updateProduct(id, title, description, price, imagepath, categoryID) {
   const validation = validateProduct({
-    title, description, imagepath, categoryID,
+    title, description, price, imagepath, categoryID,
   }, true);
 
   if (validation.length > 0) {
@@ -210,6 +220,7 @@ async function updateProduct(id, title, description, imagepath, categoryID) {
   const values = [
     title ? xss(title) : null,
     description ? xss(description) : null,
+    price ? Number(price) : null,
     upload.secure_url,
     categoryID ? Number(categoryID) : null,
   ]
@@ -218,6 +229,7 @@ async function updateProduct(id, title, description, imagepath, categoryID) {
   const fields = [
     title ? 'title' : null,
     description ? 'description' : null,
+    price ? 'price' : null,
     imagepath ? 'image' : null,
     categoryID ? 'categoryid' : null,
   ]
