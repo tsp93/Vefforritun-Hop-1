@@ -84,7 +84,7 @@ async function createProductRoute(req, res) {
  */
 async function updateProductRoute(req, res) {
   const {
-    title, description, imagepath, categoryId,
+    title, description, price, imagepath, categoryId,
   } = req.body;
   const { id } = req.params;
 
@@ -92,7 +92,7 @@ async function updateProductRoute(req, res) {
     return res.status(404).json({ error: 'Product not found' });
   }
 
-  const result = await updateProduct(id, title, description, imagepath, categoryId);
+  const result = await updateProduct(id, title, description, price, imagepath, categoryId);
 
   if (!result.success && result.validation.length > 0) {
     return res.status(400).json(result.validation);
