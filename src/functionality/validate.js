@@ -41,6 +41,12 @@ async function isBadPassword(password) {
 function validateUser({ username, email, password } = {}, patching) {
   const errors = [];
 
+  if (patching && isEmpty(email) && isEmpty(password)) {
+    errors.push({
+      error: 'Vantar uppfært netfang og/eða lykilorð',
+    });
+  }
+
   if (!isEmpty(username) || !patching) {
     if (typeof username !== 'string' || username.length < 8 || username.length > 32) {
       errors.push({
@@ -87,6 +93,13 @@ function validateProduct({
   title, description, price, imagepath, categoryId,
 } = {}, patching) {
   const errors = [];
+
+  if (patching && isEmpty(title) && isEmpty(description) && isEmpty(price)
+  && isEmpty(imagepath) && isEmpty(categoryId)) {
+    errors.push({
+      error: 'Vantar eitthvert uppfært gildi',
+    });
+  }
 
   if (!isEmpty(title) || !patching) {
     if (typeof title !== 'string' || title.length < 4 || title.length > 40) {
