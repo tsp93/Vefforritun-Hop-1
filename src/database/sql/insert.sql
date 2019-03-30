@@ -6,4 +6,4 @@ VALUES
 INSERT INTO users
   ( username, email, password)
 VALUES
-  ('nn', 'nn@example.org', '$2b$11$HtSXl56T0dhgF2RDcI1PvuE4W6rcGH/4MVLEwpxA/0nzuYhtcRRDa');
+  ('normaluser', 'normalguy@goulash.com', '$2b$11$FiigxhcAGDeKAInFTdW5wuoFJbmofK/oFDvirk6sO9S8bxixEeCze');

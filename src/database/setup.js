@@ -13,6 +13,7 @@ const {
   CLOUDINARY_CLOUD,
   CLOUDINARY_API_KEY,
   CLOUDINARY_API_SECRET,
+  PUBLIC_ID,
 } = process.env;
 
 cloudinary.config({
@@ -65,7 +66,7 @@ async function addStuff() {
       .insert({ title: fakeProduct })
       .insert({ description: descript })
       .insert({ price: randPrice })
-      .insert({ image: cloudinary.url(`v1553806495/Vef2-Hop1/${randImg}`) })
+      .insert({ image: cloudinary.url(`${PUBLIC_ID}${randImg}`) })
       .insert({ categoryId: randCatId });
     sqlCommands.push(`${sqlString.toString().slice(0, -1)} ON CONFLICT ON CONSTRAINT products_title_key DO NOTHING;`);
   }
