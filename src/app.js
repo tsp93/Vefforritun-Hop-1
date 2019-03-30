@@ -1,6 +1,5 @@
 require('dotenv').config();
 
-const path = require('path');
 const express = require('express');
 
 const auth = require('./auth');
@@ -9,8 +8,6 @@ const api = require('./api');
 const app = express();
 
 app.use(express.urlencoded({ extended: true }));
-
-app.use(express.static(path.join(__dirname, '../public')));
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
@@ -46,6 +43,7 @@ app.use(errorHandler);
 const hostname = '127.0.0.1';
 const port = process.env.PORT || 3000;
 
+// Remove hostname down below for heroku to work
 app.listen(port, hostname, () => {
   console.info(`Server running at http://${hostname}:${port}/`);
 });
