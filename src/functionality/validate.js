@@ -185,9 +185,45 @@ function validateLine(productId, amount, patching) {
   return errors;
 }
 
+/**
+ * Staðfestir að pöntun sé gild.
+ *
+ * @param {Order} order Order item til að staðfesta
+ * @returns {array} Fylki af villum sem komu upp, tómt ef engin villa
+ */
+function validateOrder(cartId, name, address, admin) {
+  const errors = [];
+
+  if (admin) {
+    if (!Number.isInteger(Number(cartId)) || Number(cartId) < 1) {
+      errors.push({
+        field: 'cartId',
+        message: 'Verður að vera heiltala stærri en núll',
+      });
+    }
+  }
+
+  if (typeof name !== 'string' || name.length < 4 || name.length > 40) {
+    errors.push({
+      field: 'name',
+      message: 'Nafn verður að vera strengur sem er 4 til 64 stafir',
+    });
+  }
+
+  if (typeof address !== 'string' || address.length < 4 || address.length > 100) {
+    errors.push({
+      field: 'address',
+      message: 'Heimilisfang verður að vera strengur sem er 4 til 100 stafir',
+    });
+  }
+
+  return errors;
+}
+
 module.exports = {
   validateUser,
   validateProduct,
   validateCategory,
   validateLine,
+  validateOrder,
 };

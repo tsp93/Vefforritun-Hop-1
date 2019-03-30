@@ -30,9 +30,43 @@ const {
   updateCartLineRoute,
   deleteCartLineRoute,
 } = require('./cart');
+const {
+  getOrdersRoute,
+  getOrderRoute,
+  createOrderRoute,
+} = require('./order');
 
 const router = express.Router();
 
+function indexRoute(req, res) {
+  return res.json({
+    users: {
+      users: '/users/',
+      user: '/users/{id}',
+      me: '/users/me',
+      register: '/users/register',
+      login: '/users/login',
+    },
+    categories: {
+      categories: '/categories/',
+      category: '/categories/{id}',
+    },
+    products: {
+      products: '/products/',
+      product: '/products/{id}',
+    },
+    cart: {
+      cart: '/cart/',
+      line: '/cart/line/{id}',
+    },
+    orders: {
+      orders: '/orders/',
+      order: '/orders/{id}',
+    },
+  });
+}
+
+router.get('/', indexRoute);
 
 router.get('/users/me', requireAuth, catchErrors(getMeRoute));
 router.patch('/users/me', requireAuth, catchErrors(changeMeRoute));
@@ -57,5 +91,9 @@ router.post('/cart/', requireAuth, catchErrors(addToCartRoute));
 router.get('/cart/line/:id', requireAuth, catchErrors(getCartLineRoute));
 router.patch('/cart/line/:id', requireAuth, catchErrors(updateCartLineRoute));
 router.delete('/cart/line/:id', requireAuth, catchErrors(deleteCartLineRoute));
+
+router.get('/orders/', requireAuth, catchErrors(getOrdersRoute));
+router.post('/orders/', requireAuth, catchErrors(createOrderRoute));
+router.get('/orders/:id', requireAuth, catchErrors(getOrderRoute));
 
 module.exports = router;
