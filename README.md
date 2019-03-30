@@ -64,48 +64,48 @@ Eftirfarandi eru möguleg köll, svigi segir hver getur notað tilsvarandi kall:
 * `/users/`
   * `GET` (admin)
 * `/users/register`
-  * `POST` (anyone), krefst { username, email, password } í body
+  * `POST` (anyone), krefst `{ username, email, password }` í body
 * `/users/login`
-  * `POST` (anyone), krefst { email, password } í body
+  * `POST` (anyone), krefst `{ email, password }` í body
 * `/users/me`
   * `GET` (user)
-  * `PATCH` (user), krefst eitt af { email, password } í body
+  * `PATCH` (user), krefst eitt af `{ email, password }` í body
 * `/users/{id}`
   * `GET` (admin)
-  * `PATCH` (admin), krefst { changeTo } í body
+  * `PATCH` (admin), krefst `{ changeTo }` í body
 
 ### Flokkar
 * `/categories/`
-  * `GET` (anyone), mögulegt að hafa { offset, limit } í query
-  * `POST` (admin), krefst { title } í body
+  * `GET` (anyone), mögulegt að hafa `{ offset, limit }` í query
+  * `POST` (admin), krefst `{ title }` í body
 * `/categories/{id}`
-  * `PATCH` (admin), krefst { title } í body
+  * `PATCH` (admin), krefst `{ title }` í body
   * `DELETE` (admin)
 
 ### Vörur
 * `/products/`
-  * `GET` (anyone), mögulegt að hafa { offset, limit, category, search } í query
-  * `POST` (admin), krefst { title, description, price, imagepath, categoryId } í body
+  * `GET` (anyone), mögulegt að hafa `{ offset, limit, category, search }` í query
+  * `POST` (admin), krefst `{ title, description, price, imagepath, categoryId }` í body
 * `/products/{id}`
   * `GET` (anyone)
-  * `PATCH` (admin) krefst eitt af { title, description, price, imagepath, categoryId } í body
+  * `PATCH` (admin) krefst eitt af `{ title, description, price, imagepath, categoryId }` í body
   * `DELETE` (admin)
 
 ### Karfa
 * `/cart/`
-  * `GET` (user), mögulegt að hafa { offset, limit } í query
-  * `POST` (user), krefst { productId, amount } í body
+  * `GET` (user), mögulegt að hafa `{ offset, limit }` í query
+  * `POST` (user), krefst `{ productId, amount }` í body
 * `/cart/line/{id}`
   * `GET` (user)
-  * `PATCH` (user), krefst { amount } í body
+  * `PATCH` (user), krefst `{ amount }` í body
   * `DELETE` (user)
 
 ### Pöntun
 * `/orders/`
-  * `GET` (user), mögulegt að hafa { offset, limit } í query
-  * `POST` (user), krefst { cartId, name, address } í body
+  * `GET` (user), mögulegt að hafa `{ offset, limit }` í query
+  * `POST` (user), krefst `{ cartId, name, address }` í body
 * `/orders/{id}`
-  * `GET` (user), mögulegt að hafa { offset, limit } í query
+  * `GET` (user), mögulegt að hafa `{ offset, limit }` í query
 
 ## Heroku
 
