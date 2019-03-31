@@ -2,6 +2,10 @@
 
 Útfært af einum aðila, þ.e. mér. Verkefnalýsingu má finna [hér](https://github.com/vefforritun/vef2-2019-h1).
 
+## Heroku
+
+Verkefnið má finna keyrandi á Heroku [hér](https://vefforritun-hop1.herokuapp.com/).
+
 ## Uppsetning
 
 Það þarf að gera nokkra hluti til að setja upp verkefnið:
@@ -106,7 +110,3 @@ Eftirfarandi eru möguleg köll, svigi segir hver getur notað tilsvarandi kall:
   * `POST` *(user)*, krefst `{ cartId, name, address }` í body
 * `/orders/{id}`
   * `GET` *(user)*, mögulegt að hafa `{ offset, limit }` í query
-
-## Heroku
-
-Verkefnið má finna keyrandi á Heroku [hér](https://vefforritun-hop1.herokuapp.com/).
