@@ -33,6 +33,11 @@ async function getUsersRoute(req, res) {
  */
 async function getUserRoute(req, res) {
   const { id } = req.params;
+
+  if (!Number.isInteger(Number(id))) {
+    return res.status(404).json({ error: 'User not found' });
+  }
+
   const result = await getUserById(id);
 
   if (!result) {

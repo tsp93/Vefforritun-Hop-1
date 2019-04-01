@@ -37,6 +37,11 @@ async function getProductsRoute(req, res) {
  */
 async function getProductRoute(req, res) {
   const { id } = req.params;
+
+  if (!Number.isInteger(Number(id))) {
+    return res.status(404).json({ error: 'Product not found' });
+  }
+
   const result = await getProductById(id);
 
   if (!result) {
