@@ -10,7 +10,7 @@ const {
  *
  * @param {object} req Request hlutur
  * @param {object} res Response hlutur
- * @returns {array} Fylki af flokkum
+ * @returns {object} Hlutur með flokkum
  */
 async function getCategoriesRoute(req, res) {
   const { offset = 0, limit = 10 } = req.query;
@@ -28,7 +28,7 @@ async function getCategoriesRoute(req, res) {
  *
  * @param {object} req Request hlutur
  * @param {object} res Response hlutur
- * @returns {array} Fylki með flokknum sem var búinn til
+ * @returns {object} Hlutur með flokknum sem var búinn til
  */
 async function createCategoryRoute(req, res) {
   const { title } = req.body;
@@ -50,7 +50,7 @@ async function createCategoryRoute(req, res) {
  *
  * @param {object} req Request hlutur
  * @param {object} res Response hlutur
- * @returns {array} Fylki með uppfærðum flokk
+ * @returns {object} Hlutur með uppfærðum flokk
  */
 async function updateCategoryRoute(req, res) {
   const { title } = req.body;
@@ -78,7 +78,7 @@ async function updateCategoryRoute(req, res) {
  *
  * @param {object} req Request hlutur
  * @param {object} res Response hlutur
- * @returns {array} Fylki með eyddum flokk
+ * @returns {object} Hlutur með eyddum flokk
  */
 async function deleteCategoryRoute(req, res) {
   const { id } = req.params;

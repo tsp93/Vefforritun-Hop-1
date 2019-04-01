@@ -54,7 +54,7 @@ async function getProducts({
  * Sækir vöru eftir id.
  *
  * @param {number} id
- * @returns {array} Fylki með vöru
+ * @returns {object} Hlutur með vöru
  */
 async function getProductById(id) {
   const result = await query(`SELECT * FROM products WHERE id = ${id}`);
@@ -65,7 +65,7 @@ async function getProductById(id) {
  * Sækir vöru eftir nafni.
  *
  * @param {string} title Nafn á vöru
- * @returns {array} Fylki með vöru
+ * @returns {object} Hlutur með vöru
  */
 async function getProductByTitle(title) {
   const result = await query(`SELECT * FROM products WHERE title = '${title}'`);
@@ -110,7 +110,7 @@ async function uploadToCloudinary(imagepath) {
  * @param {number} price Verð á vöru
  * @param {string} image Path á mynd með endingu: jpg, png eða gif
  * @param {number} categoryID Id á flokk
- * @returns {array} Fylki með vöru
+ * @returns {object} Hlutur með vörunni sem var búin til
  */
 async function createProduct(title, description, price, imagepath, categoryID) {
   const validation = validateProduct({
@@ -192,8 +192,7 @@ async function createProduct(title, description, price, imagepath, categoryID) {
  * @param {number} price Verð á vöru
  * @param {string} image Path á mynd með endingu: jpg, png eða gif
  * @param {number} categoryID Id á flokk
- *
- * @returns {array} Varan sem var breytt
+ * @returns {object} Hlutur með vörunni sem var breytt
  */
 async function updateProduct(id, title, description, price, imagepath, categoryID) {
   const validation = validateProduct({
@@ -257,7 +256,7 @@ async function updateProduct(id, title, description, price, imagepath, categoryI
  * Eyðir vöru
  *
  * @param {number} id Id vöru
- * @returns {array} Fylki með vöru
+ * @returns {object} Fylki með eyddri vöru
  */
 async function deleteProduct(id) {
   const result = await query(`DELETE FROM products WHERE id = ${id} RETURNING *`);

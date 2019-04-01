@@ -23,7 +23,7 @@ async function getUsers({ offset = 0, limit = 10 }) {
  * Sækir notanda eftir id.
  *
  * @param {number} id Id fyrir notanda
- * @returns {array} Notandi ef fundinn, annars tómt
+ * @returns {object} Notandi ef fundinn, annars tómt
  */
 async function getUserById(id) {
   const result = await query(`SELECT id, username, email, admin FROM users WHERE id = ${id}`);
@@ -34,7 +34,7 @@ async function getUserById(id) {
  * Sækir notanda eftir netfangi.
  *
  * @param {string} email netfang
- * @returns {array} Notandi ef fundinn, annars tómt
+ * @returns {object} Notandi ef fundinn, annars tómt
  */
 async function getUserByEmail(email) {
   const result = await query(`SELECT id, username, password, email, admin FROM users WHERE email = '${email}'`);
@@ -48,8 +48,7 @@ async function getUserByEmail(email) {
  * @param {number} id Id fyrir notanda sem á að breyta
  * @param {boolean} changeTo Admin gildi sem notandi á að fá
  * @param {number} userId Id fyrir notandann sem er að breyta
- *
- * @returns {array} Notandinn sem var breyttur
+ * @returns {object} Notandinn sem var breyttur
  */
 async function changeUserAdmin(id, changeTo, userId) {
   // Ekki leyfa notanda að breyta sjálfum sér
@@ -83,7 +82,6 @@ async function changeUserAdmin(id, changeTo, userId) {
  * Hashar lykilorð með bcrypt
  *
  * @param {string} password Lykilorð til að hasha
- *
  * @returns {string} Hashað lykilorð
  */
 async function hashPassword(password) {
@@ -97,8 +95,7 @@ async function hashPassword(password) {
  * @param {string} username Notendanafn
  * @param {string} email Netfang
  * @param {string} password Lykilorð
- *
- * @returns {array} Notandinn sem var búinn til
+ * @returns {object} Notandinn sem var búinn til
  */
 async function createUser(username, email, password) {
   const validation = validateUser({ username, email, password }, false);
@@ -153,8 +150,7 @@ async function createUser(username, email, password) {
  * @param {number} userId Id fyrir notanda sem á að breyta
  * @param {string} email Nýtt netfang
  * @param {string} password Nýtt lykilorð
- *
- * @returns {array} Notandinn sem var breyttur
+ * @returns {object} Notandinn sem var breyttur
  */
 async function updateUser(userId, email, password) {
   const validation = validateUser({ email, password }, true);
@@ -204,7 +200,6 @@ async function updateUser(userId, email, password) {
  *
  * @param {string} password Lykilorð sem þarf að athuga
  * @param {string} user Lykilorð notanda í gagnagrunni
- *
  * @returns {boolean} Satt ef lykilorð er rétt, ósatt annars
  */
 async function comparePasswords(password, userPass) {

@@ -6,7 +6,7 @@ const { validateLine } = require('./validate');
  * Sækir körfu eftir notenda. Ef karfa er ekki til þá er ein búin til.
  *
  * @param {number} id Id á notanda
- * @returns {array} Fylki með körfu
+ * @returns {object} Hlutur með körfu
  */
 async function getCartInfo(id) {
   let cartSearch = await query(`SELECT * FROM ordercart WHERE userid = ${id} AND isorder = false`);
@@ -22,7 +22,7 @@ async function getCartInfo(id) {
  * @param {number} id Id á notanda
  * @param {number} offset Hvaða línu á að byrja á
  * @param {number} limit Hversu margar línur á að ná í
- * @returns {array} Fylki með körfu og línum
+ * @returns {object} Hlutur með körfu og línum
  */
 async function getCart(id, { offset = 0, limit = 10 }) {
   const cart = await getCartInfo(id);
@@ -44,7 +44,7 @@ async function getCart(id, { offset = 0, limit = 10 }) {
  * @param {number} id Id á notanda
  * @param {number} productId Id á vöru
  * @param {number} amount Fjöldi af vöru
- * @returns {array} Fylki með línunni sem bætta var við
+ * @returns {object} Hlutur með línunni sem bætta var við
  */
 async function addToCart(id, productId, amount) {
   const validation = validateLine(productId, amount, false);
@@ -100,7 +100,7 @@ async function addToCart(id, productId, amount) {
  *
  * @param {number} userId Id á notanda
  * @param {number} id Id á línu í körfu
- * @returns {array} Fylki með línu úr körfu
+ * @returns {object} Hlutur með línu úr körfu
  */
 async function getCartLine(userId, id) {
   const cart = await getCartInfo(userId);
@@ -118,7 +118,7 @@ async function getCartLine(userId, id) {
  * @param {number} userId Id á notanda
  * @param {number} Id Id á línu í körfu
  * @param {number} amount Fjöldi af vöru
- * @returns {array} Fylki með uppfærðri línu úr körfu
+ * @returns {object} Hlutur með uppfærðri línu úr körfu
  */
 async function updateCartLine(userId, id, amount) {
   const validation = validateLine(null, amount, true);
@@ -170,7 +170,7 @@ async function updateCartLine(userId, id, amount) {
  *
  * @param {number} userId Id á notanda
  * @param {number} Id Id á línu í körfu
- * @returns {array} Fylki með eyddri línu úr körfu
+ * @returns {object} Hlutur með eyddri línu úr körfu
  */
 async function deleteCartLine(userId, id) {
   const checkExists = await query(`SELECT * FROM ordercartproducts WHERE id = ${id}`);

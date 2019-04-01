@@ -19,7 +19,7 @@ async function getCategories({ offset = 0, limit = 10 }) {
  * Bætir við flokk
  *
  * @param {string} title Nafn á flokk
- * @returns {array} Fylki með flokknum sem var búinn til
+ * @returns {object} Hlutur með flokknum sem var búinn til
  */
 async function createCategory(title) {
   const validation = validateCategory(title);
@@ -65,7 +65,7 @@ async function createCategory(title) {
  *
  * @param {number} id Id á flokk
  * @param {string} title Nýtt nafn á flokk
- * @returns {array} Fylki með uppfærðum flokk
+ * @returns {object} Hlutur með uppfærðum flokk
  */
 async function updateCategory(id, title) {
   const validation = validateCategory(title);
@@ -102,7 +102,7 @@ async function updateCategory(id, title) {
  * Eyðir flokk
  *
  * @param {number} id Id á flokk
- * @returns {array} Fylki með eyddum flokk
+ * @returns {object} Hlutur með eyddum flokk
  */
 async function deleteCategory(id) {
   const result = await query(`DELETE FROM categories WHERE id = ${id} RETURNING *`);

@@ -9,7 +9,7 @@ const {
  *
  * @param {object} req Request hlutur
  * @param {object} res Response hlutur
- * @returns {array} Fylki með körfu
+ * @returns {object} Hlutur með körfu
  */
 async function getOrdersRoute(req, res) {
   const { id } = req.user;
@@ -28,7 +28,7 @@ async function getOrdersRoute(req, res) {
  *
  * @param {object} req Request hlutur
  * @param {object} res Response hlutur
- * @returns {array} Fylki með körfu
+ * @returns {object} Hlutur með körfu
  */
 async function getOrderRoute(req, res) {
   const { id } = req.params;
@@ -53,7 +53,7 @@ async function getOrderRoute(req, res) {
  *
  * @param {object} req Request hlutur
  * @param {object} res Response hlutur
- * @returns {array} Fylki með pöntununni sem var búin til
+ * @returns {object} Hlutur með pöntununni sem var búin til
  */
 async function createOrderRoute(req, res) {
   const { id } = req.user;

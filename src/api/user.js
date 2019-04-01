@@ -11,7 +11,7 @@ const {
  *
  * @param {object} req Request hlutur
  * @param {object} res Response hlutur
- * @returns {array} Fylki af notendum
+ * @returns {object} Hlutur með notendum
  */
 async function getUsersRoute(req, res) {
   const { offset = 0, limit = 10 } = req.query;
@@ -29,7 +29,7 @@ async function getUsersRoute(req, res) {
  *
  * @param {object} req Request hlutur
  * @param {object} res Response hlutur
- * @returns {array} Fylki með notanda
+ * @returns {object} Hlutur með notanda
  */
 async function getUserRoute(req, res) {
   const { id } = req.params;
@@ -52,7 +52,7 @@ async function getUserRoute(req, res) {
  *
  * @param {object} req Request hlutur
  * @param {object} res Response hlutur
- * @returns {array} Fylki með notendanum sem var breyttur
+ * @returns {object} Hlutur með notendanum sem var breyttur
  */
 async function changeAdminRoute(req, res) {
   const { id } = req.params;
@@ -81,7 +81,7 @@ async function changeAdminRoute(req, res) {
  *
  * @param {object} req Request hlutur
  * @param {object} res Response hlutur
- * @returns {array} Fylki með notendanum sem var búinn til
+ * @returns {object} Hlutur með notendanum sem var búinn til
  */
 async function createUserRoute(req, res) {
   const { username, email, password } = req.body;
@@ -103,7 +103,7 @@ async function createUserRoute(req, res) {
  *
  * @param {object} req Request hlutur
  * @param {object} res Response hlutur
- * @returns {array} Fylki með núverandi notanda
+ * @returns {object} Hlutur með núverandi notanda
  */
 async function getMeRoute(req, res) {
   const { id } = req.user;
@@ -121,7 +121,7 @@ async function getMeRoute(req, res) {
  *
  * @param {object} req Request hlutur
  * @param {object} res Response hlutur
- * @returns {array} Fylki með núverandi notanda
+ * @returns {object} Hlutur með uppfærðum núverandi notanda
  */
 async function changeMeRoute(req, res) {
   const { email, password } = req.body;

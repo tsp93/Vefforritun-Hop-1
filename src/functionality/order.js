@@ -31,7 +31,7 @@ async function getOrders(id, { offset = 0, limit = 10 }) {
  * @param {number} userId Id á notanda
  * @param {number} offset Hvaða línu á að byrja á
  * @param {number} limit Hversu margar línur á að ná í
- * @returns {array} Fylki með pöntun með línum og fleira
+ * @returns {Object} Hlutur með pöntun, línum og heildarverði
  */
 async function getOrder(id, userId, { offset = 0, limit = 10 }) {
   const user = getUserById(userId);
@@ -70,7 +70,7 @@ async function getOrder(id, userId, { offset = 0, limit = 10 }) {
  * @param {number} cartId Id á körfu
  * @param {string} name Nafn á notanda
  * @param {string} address Heimilisfang notanda
- * @returns {array} Fylki með pöntununni sem var búin til
+ * @returns {object} Hlutur með pöntununni sem var búin til
  */
 async function createOrder(id, cartId, name, address) {
   const user = getUserById(id);

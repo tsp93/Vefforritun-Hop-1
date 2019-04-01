@@ -11,7 +11,7 @@ const {
  *
  * @param {object} req Request hlutur
  * @param {object} res Response hlutur
- * @returns {array} Fylki af vörum
+ * @returns {object} Hlutur með vörum
  */
 async function getProductsRoute(req, res) {
   const {
@@ -29,11 +29,11 @@ async function getProductsRoute(req, res) {
 }
 
 /**
- * Route handler til að ná í vörur
+ * Route handler til að ná í vöru
  *
  * @param {object} req Request hlutur
  * @param {object} res Response hlutur
- * @returns {array} Fylki af vörum
+ * @returns {object} Hlutur með vöru
  */
 async function getProductRoute(req, res) {
   const { id } = req.params;
@@ -56,7 +56,7 @@ async function getProductRoute(req, res) {
  *
  * @param {object} req Request hlutur
  * @param {object} res Response hlutur
- * @returns {array} Fylki með vörunni sem var búin til
+ * @returns {object} Hlutur með vörunni sem var búin til
  */
 async function createProductRoute(req, res) {
   const {
@@ -85,7 +85,7 @@ async function createProductRoute(req, res) {
  *
  * @param {object} req Request hlutur
  * @param {object} res Response hlutur
- * @returns {array} Fylki með breyttri vöru
+ * @returns {object} Hlutur með breyttri vöru
  */
 async function updateProductRoute(req, res) {
   const {
@@ -115,7 +115,7 @@ async function updateProductRoute(req, res) {
  *
  * @param {object} req Request hlutur
  * @param {object} res Response hlutur
- * @returns {array} Fylki af eyddri vöru
+ * @returns {object} Hlutur af eyddri vöru
  */
 async function deleteProductRoute(req, res) {
   const { id } = req.params;

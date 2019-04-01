@@ -38,6 +38,13 @@ const {
 
 const router = express.Router();
 
+/**
+ * Route handler fyrir index
+ *
+ * @param {object} req Request hlutur
+ * @param {object} res Response hlutur
+ * @returns {object} Hlutur öllum mögulegum leiðum
+ */
 function indexRoute(req, res) {
   return res.json({
     users: {

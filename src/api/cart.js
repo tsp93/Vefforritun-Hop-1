@@ -11,7 +11,7 @@ const {
  *
  * @param {object} req Request hlutur
  * @param {object} res Response hlutur
- * @returns {array} Fylki með körfu
+ * @returns {object} Hlutur með körfu
  */
 async function getCartRoute(req, res) {
   const { id } = req.user;
@@ -26,7 +26,7 @@ async function getCartRoute(req, res) {
  *
  * @param {object} req Request hlutur
  * @param {object} res Response hlutur
- * @returns {array} Fylki með körfu
+ * @returns {object} Hlutur með körfu
  */
 async function addToCartRoute(req, res) {
   const { id } = req.user;
@@ -54,7 +54,7 @@ async function addToCartRoute(req, res) {
  *
  * @param {object} req Request hlutur
  * @param {object} res Response hlutur
- * @returns {array} Fylki með línu úr körfu
+ * @returns {object} Hlutur með línu úr körfu
  */
 async function getCartLineRoute(req, res) {
   const { id } = req.params;
@@ -78,7 +78,7 @@ async function getCartLineRoute(req, res) {
  *
  * @param {object} req Request hlutur
  * @param {object} res Response hlutur
- * @returns {array} Fylki með uppfærðri línu úr körfu
+ * @returns {object} Hlutur með uppfærðri línu úr körfu
  */
 async function updateCartLineRoute(req, res) {
   const { id } = req.params;
@@ -111,7 +111,7 @@ async function updateCartLineRoute(req, res) {
  *
  * @param {object} req Request hlutur
  * @param {object} res Response hlutur
- * @returns {array} Fylki með eyddri línu úr körfu
+ * @returns {object} Hlutur með eyddri línu úr körfu
  */
 async function deleteCartLineRoute(req, res) {
   const { id } = req.params;
