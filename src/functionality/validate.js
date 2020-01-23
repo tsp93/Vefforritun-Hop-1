@@ -90,12 +90,12 @@ function validateUser({ username, email, password } = {}, patching) {
  * @returns {array} Fylki af villum sem komu upp, tómt ef engin villa
  */
 function validateProduct({
-  title, description, price, imagepath, categoryId,
+  title, description, price, imagepath, categoryID,
 } = {}, patching) {
   const errors = [];
 
   if (patching && isEmpty(title) && isEmpty(description) && isEmpty(price)
-  && isEmpty(imagepath) && isEmpty(categoryId)) {
+  && isEmpty(imagepath) && isEmpty(categoryID)) {
     errors.push({
       error: 'Vantar eitthvert uppfært gildi',
     });
@@ -128,7 +128,7 @@ function validateProduct({
     }
   }
 
-  if (!isEmpty(imagepath) || !patching) {
+  if (!isEmpty(imagepath)) {
     if (typeof imagepath !== 'string' || ['jpg', 'png', 'gif'].includes(mime.getExtension(imagepath))) {
       errors.push({
         field: 'imagepath',
@@ -137,10 +137,10 @@ function validateProduct({
     }
   }
 
-  if (!isEmpty(categoryId) || !patching) {
-    if (!Number.isInteger(Number(categoryId)) || Number(categoryId) < 1) {
+  if (!isEmpty(categoryID) || !patching) {
+    if (!Number.isInteger(Number(categoryID)) || Number(categoryID) < 1) {
       errors.push({
-        field: 'categoryId',
+        field: 'categoryID',
         message: 'Verður að vera heiltala stærri en núll',
       });
     }

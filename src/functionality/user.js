@@ -59,6 +59,15 @@ async function changeUserAdmin(id, changeTo, userId) {
     };
   }
 
+  // Ekki leyfa changeTo að taka annað gildi en true eða false
+  if (changeTo.toLowerCase() !== 'true' && changeTo.toLowerCase() !== 'false') {
+    return {
+      selfDestruct: false,
+      invalidChangeTo: true,
+      success: false,
+    };
+  }
+
   const result = await query(`
   UPDATE users SET admin = ${changeTo} WHERE id = ${id}
   RETURNING id, username, admin`);
@@ -66,12 +75,14 @@ async function changeUserAdmin(id, changeTo, userId) {
   if (result.rowCount === 0) {
     return {
       selfDestruct: false,
+      invalidChangeTo: false,
       success: false,
       notFound: true,
     };
   }
   return {
     selfDestruct: false,
+    invalidChangeTo: false,
     success: true,
     notFound: false,
     item: result.rows[0],

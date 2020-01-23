@@ -69,6 +69,10 @@ async function changeAdminRoute(req, res) {
     return res.status(403).json({ error: 'Cannot demote self' });
   }
 
+  if (!result.success && result.invalidChangeTo) {
+    return res.status(403).json({ error: 'changeTo value must be true or false' });
+  }
+
   if (!result.success && result.notFound) {
     return res.status(404).json({ error: 'User not found' });
   }

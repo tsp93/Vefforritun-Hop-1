@@ -55,6 +55,7 @@ async function addToCart(id, productId, amount) {
     };
   }
 
+  // Vara verður að vera til
   const product = await getProductById(productId);
   if (!product) {
     return {
@@ -67,19 +68,30 @@ async function addToCart(id, productId, amount) {
   const cart = await getCartInfo(id);
   const values = [cart.id, Number(productId), Number(amount)];
 
+  // Athugar hvort vara er nú þegar í körfu
   const exists = await query(
     `SELECT * FROM ordercartproducts 
     WHERE ordercart = ${cart.id} AND product = ${productId} ORDER BY id`,
   );
+
+  // Ef vara er nú þegar í körfu þá bætist ofan á hana meira magn
   if (exists.rowCount !== 0) {
+    const result = await query(
+      `UPDATE ordercartproducts
+      SET amount = amount + $3
+      WHERE ordercart = $1 AND product = $2
+      RETURNING *`,
+      values,
+    );
     return {
       success: false,
       notFound: false,
-      alreadyInCart: true,
       validation: [],
+      item: result.rows[0],
     };
   }
 
+  // Ef vara er ekki þegar í körfu þá bætist hún þar við
   const result = await query(
     `INSERT INTO ordercartproducts (ordercart, product, amount) 
     VALUES ($1, $2, $3)
@@ -99,17 +111,40 @@ async function addToCart(id, productId, amount) {
  * Nær í línu í körfu.
  *
  * @param {number} userId Id á notanda
- * @param {number} id Id á línu í körfu
+ * @param {number} lineId Id á línu í körfu
  * @returns {object} Hlutur með línu úr körfu
  */
-async function getCartLine(userId, id) {
+async function getCartLine(userId, lineId) {
   const cart = await getCartInfo(userId);
 
   const result = await query(
     `SELECT * FROM ordercartproducts 
-    WHERE ordercart = ${cart.id} AND id = ${id}`,
+    WHERE ordercart = ${cart.id} AND id = ${lineId}`,
   );
-  return result.rows[0];
+
+  if (!result.rows[0]) {
+    return {
+      notFound: true,
+    };
+  }
+
+  const productResult = await query(
+    `SELECT * FROM products
+    WHERE id = ${result.rows[0].product}`,
+  );
+
+  const {
+    id, ordercart, product, amount,
+  } = result.rows[0];
+
+  return {
+    notFound: false,
+    id,
+    ordercart,
+    product,
+    amount,
+    productinfo: productResult.rows[0],
+  };
 }
 
 /**

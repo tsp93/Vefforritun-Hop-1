@@ -66,9 +66,10 @@ async function getCartLineRoute(req, res) {
 
   const result = await getCartLine(userId, id);
 
-  if (!result) {
+  if (result.notFound) {
     return res.status(404).json({ error: 'Line not found' });
   }
+  delete (result.notFound);
 
   return res.status(200).json(result);
 }

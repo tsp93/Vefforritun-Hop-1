@@ -79,6 +79,10 @@ async function getProductByTitle(title) {
  * @returns {object} Gögn um myndina sem var uploadað á Cloudinary
  */
 async function uploadToCloudinary(imagepath) {
+  if (imagepath == null) {
+    // Placeholder image
+    return { item: { secure_url: 'https://res.cloudinary.com/tomcat/image/upload/v1579737311/Vef2-Hop1/placeholder.png' } };
+  }
   let upload = null;
   try {
     upload = await cloudinary.uploader.upload(imagepath, { folder: 'Vef2-Hop1', use_filename: true });
@@ -91,6 +95,8 @@ async function uploadToCloudinary(imagepath) {
         item: null,
       };
     }
+
+    console.info(error);
 
     return {
       success: false,
@@ -206,6 +212,19 @@ async function updateProduct(id, title, description, price, imagepath, categoryI
     };
   }
 
+  if (title != null) {
+    const tit = await getProductByTitle(title);
+    if (tit != null && tit.title === title) {
+      return {
+        success: false,
+        validation: [{
+          field: 'title',
+          message: 'Vörunafn er nú þegar til',
+        }],
+      };
+    }
+  }
+
   let upload = null;
   if (imagepath != null) {
     const cloudResult = await uploadToCloudinary(imagepath);
@@ -216,21 +235,21 @@ async function updateProduct(id, title, description, price, imagepath, categoryI
     upload = item;
   }
 
-  const values = [
-    title ? xss(title) : null,
-    description ? xss(description) : null,
-    price ? Number(price) : null,
-    upload.secure_url,
-    categoryID ? Number(categoryID) : null,
-  ]
-    .filter(Boolean);
-
   const fields = [
     title ? 'title' : null,
     description ? 'description' : null,
     price ? 'price' : null,
     imagepath ? 'image' : null,
     categoryID ? 'categoryid' : null,
+  ]
+    .filter(Boolean);
+
+  const values = [
+    title ? xss(title) : null,
+    description ? xss(description) : null,
+    price ? Number(price) : null,
+    upload ? upload.secure_url : null,
+    categoryID ? Number(categoryID) : null,
   ]
     .filter(Boolean);
 
